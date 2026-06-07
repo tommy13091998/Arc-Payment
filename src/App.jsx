@@ -80,7 +80,7 @@ const LANGUAGES = [
 const TRANSLATIONS = {
   en: {
     dashboard:'Dashboard', balance:'Balance', p2pSend:'P2P Direct Send', invoices:'Invoices', fxMarket:'Live FX Market', allActivity:'All Activity', disconnect:'Disconnect',
-    connectWallet:'Connect MetaMask', connectingWallet:'Connecting wallet...', availableBalance:'Available Balance', arcNetwork:'Arc network',
+    connectWallet:'Connect OKX / MetaMask', connectingWallet:'Connecting wallet...', availableBalance:'Available Balance', arcNetwork:'Arc network',
     receiveUsdc:'Receive USDC', requestInvoice:'Request Invoice', remittanceTitle:'Wise Remittance Calculator',
     demoWarning:'Simulated demo on Arc Testnet. Direct fiat conversion or local payouts are currently simulating mock rates.',
     youSend:'You send', recipientGets:'Recipient gets', gasFee:'Gas / Remit Fee', conversionRate:'Conversion Rate',
@@ -108,7 +108,7 @@ const TRANSLATIONS = {
   },
   vi: {
     dashboard:'Tổng quan', balance:'Số dư', p2pSend:'Gửi P2P trực tiếp', invoices:'Hóa đơn', fxMarket:'Thị trường FX', allActivity:'Tất cả giao dịch', disconnect:'Ngắt kết nối',
-    connectWallet:'Kết nối MetaMask', connectingWallet:'Đang kết nối...', availableBalance:'Số dư khả dụng', arcNetwork:'Mạng Arc',
+    connectWallet:'Kết nối OKX / MetaMask', connectingWallet:'Đang kết nối...', availableBalance:'Số dư khả dụng', arcNetwork:'Mạng Arc',
     receiveUsdc:'Nhận USDC', requestInvoice:'Tạo hóa đơn', remittanceTitle:'Công cụ chuyển tiền quốc tế',
     demoWarning:'Demo mô phỏng trên Arc Testnet. Tỷ giá quy đổi fiat hiện đang dùng tỷ giá giả lập.',
     youSend:'Bạn gửi', recipientGets:'Người nhận được', gasFee:'Phí Gas / Chuyển tiền', conversionRate:'Tỷ giá quy đổi',
@@ -136,7 +136,7 @@ const TRANSLATIONS = {
   },
   zh: {
     dashboard:'控制台', balance:'余额', p2pSend:'P2P 直接发送', invoices:'发票', fxMarket:'实时外汇市场', allActivity:'所有活动', disconnect:'断开连接',
-    connectWallet:'连接 MetaMask', connectingWallet:'连接中...', availableBalance:'可用余额', arcNetwork:'Arc 网络',
+    connectWallet:'连接 OKX / MetaMask', connectingWallet:'连接中...', availableBalance:'可用余额', arcNetwork:'Arc 网络',
     receiveUsdc:'接收 USDC', requestInvoice:'请求发票', remittanceTitle:'汇款计算器',
     demoWarning:'Arc 测试网模拟演示。法币转换目前使用模拟汇率。',
     youSend:'您发送', recipientGets:'收款方收到', gasFee:'燃气/汇款费用', conversionRate:'汇率',
@@ -164,7 +164,7 @@ const TRANSLATIONS = {
   },
   ja: {
     dashboard:'ダッシュボード', balance:'残高', p2pSend:'P2P 直接送金', invoices:'請求書', fxMarket:'FX マーケット', allActivity:'全取引', disconnect:'切断',
-    connectWallet:'MetaMask に接続', connectingWallet:'接続中...', availableBalance:'利用可能残高', arcNetwork:'Arc ネットワーク',
+    connectWallet:'OKX / MetaMask に接続', connectingWallet:'接続中...', availableBalance:'利用可能残高', arcNetwork:'Arc ネットワーク',
     receiveUsdc:'USDC を受け取る', requestInvoice:'請求書を作成', remittanceTitle:'送金計算機',
     demoWarning:'Arc テストネットのシミュレーションデモ。法定通貨の変換はモックレートで動作しています。',
     youSend:'送金額', recipientGets:'受取額', gasFee:'ガス/送金手数料', conversionRate:'換算レート',
@@ -192,7 +192,7 @@ const TRANSLATIONS = {
   },
   es: {
     dashboard:'Panel', balance:'Saldo', p2pSend:'Envío P2P Directo', invoices:'Facturas', fxMarket:'Mercado FX en Vivo', allActivity:'Toda la Actividad', disconnect:'Desconectar',
-    connectWallet:'Conectar MetaMask', connectingWallet:'Conectando...', availableBalance:'Saldo Disponible', arcNetwork:'Red Arc',
+    connectWallet:'Conectar OKX / MetaMask', connectingWallet:'Conectando...', availableBalance:'Saldo Disponible', arcNetwork:'Red Arc',
     receiveUsdc:'Recibir USDC', requestInvoice:'Solicitar Factura', remittanceTitle:'Calculadora de Remesas',
     demoWarning:'Demo simulada en Arc Testnet. Las conversiones a moneda local usan tasas ficticias.',
     youSend:'Tú envías', recipientGets:'El destinatario recibe', gasFee:'Gas / Comisión de envío', conversionRate:'Tasa de cambio',
@@ -220,7 +220,7 @@ const TRANSLATIONS = {
   },
   hi: {
     dashboard:'डैशबोर्ड', balance:'शेष', p2pSend:'P2P डायरेक्ट भेजें', invoices:'चालान', fxMarket:'FX बाज़ार', allActivity:'सभी गतिविधि', disconnect:'डिसकनेक्ट',
-    connectWallet:'MetaMask कनेक्ट करें', connectingWallet:'कनेक्ट हो रहा है...', availableBalance:'उपलब्ध शेष', arcNetwork:'Arc नेटवर्क',
+    connectWallet:'OKX / MetaMask कनेक्ट करें', connectingWallet:'कनेक्ट हो रहा है...', availableBalance:'उपलब्ध शेष', arcNetwork:'Arc नेटवर्क',
     receiveUsdc:'USDC प्राप्त करें', requestInvoice:'चालान अनुरोध', remittanceTitle:'प्रेषण कैलकुलेटर',
     demoWarning:'Arc Testnet पर सिम्युलेटेड डेमो। फ़िएट रूपांतरण मॉक दरों का उपयोग कर रहा है।',
     youSend:'आप भेजें', recipientGets:'प्राप्तकर्ता को मिलता है', gasFee:'गैस / प्रेषण शुल्क', conversionRate:'विनिमय दर',
@@ -248,7 +248,7 @@ const TRANSLATIONS = {
   },
   tl: {
     dashboard:'Dashboard', balance:'Balanse', p2pSend:'P2P Direktang Pagpapadala', invoices:'Mga Invoice', fxMarket:'FX Merkado', allActivity:'Lahat ng Aktibidad', disconnect:'Idiskonekta',
-    connectWallet:'Ikonekta ang MetaMask', connectingWallet:'Nagkokonekta...', availableBalance:'Available na Balanse', arcNetwork:'Arc Network',
+    connectWallet:'Ikonekta ang OKX / MetaMask', connectingWallet:'Nagkokonekta...', availableBalance:'Available na Balanse', arcNetwork:'Arc Network',
     receiveUsdc:'Tumanggap ng USDC', requestInvoice:'Humiling ng Invoice', remittanceTitle:'Kalkulador ng Remittance',
     demoWarning:'Simuladong demo sa Arc Testnet. Ang fiat conversion ay gumagamit ng mock rates.',
     youSend:'Ipadala mo', recipientGets:'Tatanggapin ng tatanggap', gasFee:'Gas / Bayad sa Remittance', conversionRate:'Rate ng Konbersyon',
@@ -276,7 +276,7 @@ const TRANSLATIONS = {
   },
   sw: {
     dashboard:'Dashibodi', balance:'Salio', p2pSend:'Tuma P2P Moja kwa Moja', invoices:'Ankara', fxMarket:'Soko la FX', allActivity:'Shughuli Zote', disconnect:'Ondoa Muunganisho',
-    connectWallet:'Unganisha MetaMask', connectingWallet:'Inaunganisha...', availableBalance:'Salio Linaloweza Kutumika', arcNetwork:'Mtandao wa Arc',
+    connectWallet:'Unganisha OKX / MetaMask', connectingWallet:'Inaunganisha...', availableBalance:'Salio Linaloweza Kutumika', arcNetwork:'Mtandao wa Arc',
     receiveUsdc:'Pokea USDC', requestInvoice:'Omba Ankara', remittanceTitle:'Kikokotoo cha Uhamishaji',
     demoWarning:'Onyesho la mfano kwenye Arc Testnet. Ubadilishaji wa fedha unatumia viwango vya mazoezi.',
     youSend:'Unatuma', recipientGets:'Mpokeaji anapata', gasFee:'Gas / Ada ya Uhamishaji', conversionRate:'Kiwango cha Ubadilishaji',
@@ -380,14 +380,15 @@ function App() {
 
   const selectedCountry = COUNTRIES.find(c => c.id === targetCountryId);
 
-  // Set up event listeners for MetaMask account changes
+  // Set up event listeners for OKX / MetaMask account changes
   useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', handleAccountsChanged);
-      window.ethereum.on('chainChanged', handleChainChanged);
+    const provider = window.okxwallet || window.ethereum;
+    if (provider) {
+      provider.on('accountsChanged', handleAccountsChanged);
+      provider.on('chainChanged', handleChainChanged);
       
       // Auto-connect if already authorized
-      window.ethereum.request({ method: 'eth_accounts' })
+      provider.request({ method: 'eth_accounts' })
         .then(handleAccountsChanged)
         .catch(err => console.error('Error auto-connecting:', err));
     }
@@ -406,9 +407,10 @@ function App() {
     }
 
     return () => {
-      if (window.ethereum) {
-        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        window.ethereum.removeListener('chainChanged', handleChainChanged);
+      const provider = window.okxwallet || window.ethereum;
+      if (provider) {
+        provider.removeListener('accountsChanged', handleAccountsChanged);
+        provider.removeListener('chainChanged', handleChainChanged);
       }
     };
   }, []);
@@ -473,48 +475,59 @@ function App() {
 
   // Connect Wallet & Switch to Arc Testnet
   const connectWallet = async () => {
-    if (!window.ethereum) {
-      addToast('error', 'Web3 provider not found. Please install MetaMask or Coinbase Wallet.');
+    const provider = window.okxwallet || window.ethereum;
+    if (!provider) {
+      addToast('error', 'Web3 provider not found. Please install OKX Wallet or MetaMask.');
       return;
     }
 
     setIsConnecting(true);
     try {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await provider.request({ method: 'eth_requestAccounts' });
       const activeAccount = accounts[0];
-      setAccount(activeAccount);
 
-      const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' });
+      const chainIdHex = await provider.request({ method: 'eth_chainId' });
       
       if (chainIdHex !== ARC_TESTNET_PARAMS.chainId) {
         addToast('info', 'Switching network to Arc Testnet...');
         try {
-          await window.ethereum.request({
+          await provider.request({
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: ARC_TESTNET_PARAMS.chainId }],
           });
         } catch (switchError) {
           if (switchError.code === 4902) {
             try {
-              await window.ethereum.request({
+              await provider.request({
                 method: 'wallet_addEthereumChain',
                 params: [ARC_TESTNET_PARAMS],
               });
             } catch (addError) {
               addToast('error', `Failed to add Arc Testnet: ${addError.message}`);
+              setIsConnecting(false);
+              return;
             }
           } else {
             addToast('error', `Failed to switch network: ${switchError.message}`);
+            setIsConnecting(false);
+            return;
           }
         }
-      } else {
-        setNetwork({ name: 'Arc Testnet', chainId: 5042002, isCorrect: true });
       }
 
+      // Request user signature to authenticate/verify identity
+      addToast('info', 'Please sign the message in your wallet...');
+      const ethersProvider = new ethers.BrowserProvider(provider);
+      const signer = await ethersProvider.getSigner();
+      await signer.signMessage('Welcome to Arc Payment! Click sign to securely authenticate your wallet.');
+      
+      setAccount(activeAccount);
+      setNetwork({ name: 'Arc Testnet', chainId: 5042002, isCorrect: true });
+      addToast('success', 'Wallet successfully connected and signed!');
       await fetchBalances();
 
     } catch (err) {
-      addToast('error', `Connection error: ${err.message}`);
+      addToast('error', `Connection or sign error: ${err.message}`);
     } finally {
       setIsConnecting(false);
     }
@@ -530,10 +543,11 @@ function App() {
 
   // Fetch balances
   const fetchBalances = async () => {
-    if (!window.ethereum || !account) return;
+    const providerEnv = window.okxwallet || window.ethereum;
+    if (!providerEnv || !account) return;
 
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const provider = new ethers.BrowserProvider(providerEnv);
       
       const nativeVal = await provider.getBalance(account);
       const formattedNative = parseFloat(ethers.formatEther(nativeVal)).toFixed(2);
@@ -629,7 +643,8 @@ function App() {
 
     setIsRemitting(true);
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const providerEnv = window.okxwallet || window.ethereum;
+      const provider = new ethers.BrowserProvider(providerEnv);
       const signer = await provider.getSigner();
       
       let txHash = '';
@@ -735,7 +750,8 @@ function App() {
 
     setIsP2pSending(true);
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const providerEnv = window.okxwallet || window.ethereum;
+      const provider = new ethers.BrowserProvider(providerEnv);
       const signer = await provider.getSigner();
       
       let txHash = '';
