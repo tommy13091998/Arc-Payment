@@ -17,7 +17,9 @@ import {
   QrCode,
   FileText,
   List,
-  ChevronDown
+  ChevronDown,
+  Sun,
+  Moon
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { ethers } from 'ethers';
@@ -335,6 +337,11 @@ function App() {
   const [invoiceDesc, setInvoiceDesc] = useState('');
   const [generatedInvoiceLink, setGeneratedInvoiceLink] = useState('');
   
+  // Theme State
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('arc_pay_theme') || 'dark';
+  });
+
   // Copy flags & Modals
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
@@ -439,6 +446,16 @@ function App() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Sync theme with body class list
+  useEffect(() => {
+    if (theme === 'light') {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+    localStorage.setItem('arc_pay_theme', theme);
+  }, [theme]);
 
   // Node jumping timer
   useEffect(() => {
@@ -945,6 +962,17 @@ function App() {
                 {network.name}
               </span>
             )}
+
+            {/* Theme Toggle Button */}
+            <button
+              type="button"
+              className="lang-selector-trigger"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              aria-label="Toggle theme"
+              style={{ width: '34px', height: '34px', padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            >
+              {theme === 'dark' ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4 text-indigo-400" />}
+            </button>
 
             {/* Language Selector */}
             <div className="lang-selector-wrapper" ref={langDropdownRef}>
@@ -1633,6 +1661,17 @@ function App() {
       ) : (
         /* Unconnected Landing Page View */
         <div className="app-landing-screen">
+          <div style={{ position: 'absolute', top: '24px', right: '24px' }}>
+            <button
+              type="button"
+              className="lang-selector-trigger"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              aria-label="Toggle theme"
+              style={{ width: '36px', height: '36px', padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            >
+              {theme === 'dark' ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4 text-indigo-400" />}
+            </button>
+          </div>
           <div className="app-landing-hero">
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
               <div className="spinning-globe-container" style={{ width: '64px', height: '64px' }}>

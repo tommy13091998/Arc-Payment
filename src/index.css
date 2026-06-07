@@ -1215,3 +1215,111 @@ body {
 .spin-animation {
   animation: spin-loader 0.8s linear infinite;
 }
+
+/* Light Mode Theme Styles */
+body.light-theme {
+  --bg-main: 220, 20%, 97%;     /* #F4F5F7 Light Grayish Blue */
+  --bg-card: 0, 0%, 100%;       /* #FFFFFF Pure White */
+  --bg-card-hover: 220, 20%, 94%;
+  --border-color: 220, 15%, 88%; /* Light gray border */
+  --border-color-hover: 213, 65%, 49%;
+  
+  --primary: 213, 65%, 49%;     /* Same Arc Blue */
+  --primary-glow: 213, 65%, 49%, 0.08;
+  --secondary: 171, 80%, 35%;   /* Slightly darker teal for contrast on white background */
+  --secondary-glow: 171, 80%, 35%, 0.08;
+  
+  --text-primary: 220, 15%, 12%; /* #191B21 Dark Gray */
+  --text-secondary: 220, 10%, 38%;
+  --text-muted: 220, 8%, 55%;
+  
+  color-scheme: light;
+}
+
+body.light-theme .input-field,
+body.light-theme .wise-input-box,
+body.light-theme .wise-select-dropdown {
+  background-color: rgba(0, 0, 0, 0.035);
+  color: hsl(var(--text-primary));
+}
+
+body.light-theme .input-field:focus {
+  border-color: hsl(var(--primary));
+  background-color: #ffffff;
+}
+
+body.light-theme .wise-number-input {
+  color: hsl(var(--text-primary));
+}
+
+body.light-theme .wise-currency-trigger {
+  background-color: rgba(0,0,0,0.03);
+  color: hsl(var(--text-primary));
+}
+
+body.light-theme .stripe-sidebar {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+body.light-theme .sidebar-logo-text {
+  background: linear-gradient(135deg, #191b21 30%, #3e74bb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .sidebar-nav-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+body.light-theme .spinning-globe-container {
+  background-color: #f0f4f8;
+  box-shadow: 
+    inset -4px -4px 8px rgba(0, 0, 0, 0.15), 
+    inset 4px 4px 8px rgba(255, 255, 255, 0.8), 
+    0 0 14px hsla(var(--primary), 0.25);
+}
+
+body.light-theme .stripe-table tr:hover td {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+body.light-theme .stripe-table th {
+  background-color: rgba(0, 0, 0, 0.01);
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+body.light-theme .stripe-table td {
+  border-bottom-color: rgba(0, 0, 0, 0.04);
+}
+
+body.light-theme .modal-content {
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .toast {
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+body.light-theme .stripe-card {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+body.light-theme .stripe-card:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 0 16px hsla(var(--primary-glow));
+}
+
+body.light-theme .stripe-address-bar {
+  background-color: rgba(0,0,0,0.02);
+}
+
+body.light-theme .globe-card-body {
+  background-color: rgba(0,0,0,0.03);
+}
+
+body.light-theme .rate-item {
+  background-color: rgba(0, 0, 0, 0.015);
+}
+
+body.light-theme .rate-item:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
