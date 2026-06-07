@@ -19,7 +19,8 @@ import {
   List,
   ChevronDown,
   Sun,
-  Moon
+  Moon,
+  Lock
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { ethers } from 'ethers';
@@ -106,7 +107,7 @@ const TRANSLATIONS = {
     historyTitle:'Full Transaction Ledger Activity',
     colType:'Type', colAmount:'USDC Amount', colPayout:'Payout value', colCountry:'Country', colTxHash:'Transaction hash', colStatus:'Status',
     landingDesc:'Instant cross-border stablecoin remittance powered by USDC native gas on Arc network.',
-    updating:'Arc network', done:'Done',
+    updating:'Arc network', done:'Done', remitLockedMessage:'Remittance services are temporarily disabled. Wallet signing is locked for this feature.',
   },
   vi: {
     dashboard:'Tổng quan', balance:'Số dư', p2pSend:'Gửi P2P trực tiếp', invoices:'Hóa đơn', fxMarket:'Thị trường FX', allActivity:'Tất cả giao dịch', disconnect:'Ngắt kết nối',
@@ -134,7 +135,7 @@ const TRANSLATIONS = {
     historyTitle:'Lịch sử giao dịch đầy đủ',
     colType:'Loại', colAmount:'Số USDC', colPayout:'Giá trị nhận', colCountry:'Quốc gia', colTxHash:'Mã giao dịch', colStatus:'Trạng thái',
     landingDesc:'Chuyển tiền xuyên biên giới tức thì bằng USDC trên mạng Arc, phí gas bằng 0.',
-    updating:'Mạng Arc', done:'Xong',
+    updating:'Mạng Arc', done:'Xong', remitLockedMessage:'Dịch vụ chuyển tiền quốc tế hiện đã bị khóa. Tính năng ký ví không được hỗ trợ cho mục này.',
   },
   zh: {
     dashboard:'控制台', balance:'余额', p2pSend:'P2P 直接发送', invoices:'发票', fxMarket:'实时外汇市场', allActivity:'所有活动', disconnect:'断开连接',
@@ -162,7 +163,7 @@ const TRANSLATIONS = {
     historyTitle:'完整交易记录',
     colType:'类型', colAmount:'USDC 数量', colPayout:'支付金额', colCountry:'国家', colTxHash:'交易哈希', colStatus:'状态',
     landingDesc:'通过 Arc 网络上的 USDC 原生 Gas 实现即时跨境稳定币汇款。',
-    updating:'Arc 网络', done:'完成',
+    updating:'Arc 网络', done:'完成', remitLockedMessage:'跨境汇款服务已暂时禁用。该功能已锁定钱包签名。',
   },
   ja: {
     dashboard:'ダッシュボード', balance:'残高', p2pSend:'P2P 直接送金', invoices:'請求書', fxMarket:'FX マーケット', allActivity:'全取引', disconnect:'切断',
@@ -190,7 +191,7 @@ const TRANSLATIONS = {
     historyTitle:'完全な取引元帳',
     colType:'種類', colAmount:'USDC 金額', colPayout:'受取金額', colCountry:'国', colTxHash:'トランザクションハッシュ', colStatus:'ステータス',
     landingDesc:'Arc ネットワーク上の USDC ネイティブ Gas による即時クロスボーダー送金。',
-    updating:'Arc ネットワーク', done:'完了',
+    updating:'Arc ネットワーク', done:'完了', remitLockedMessage:'海外送金サービスは一時的に無効になっています。この機能のウォレット署名はロックされています。',
   },
   es: {
     dashboard:'Panel', balance:'Saldo', p2pSend:'Envío P2P Directo', invoices:'Facturas', fxMarket:'Mercado FX en Vivo', allActivity:'Toda la Actividad', disconnect:'Desconectar',
@@ -218,7 +219,7 @@ const TRANSLATIONS = {
     historyTitle:'Registro completo de transacciones',
     colType:'Tipo', colAmount:'Monto USDC', colPayout:'Valor de pago', colCountry:'País', colTxHash:'Hash de transacción', colStatus:'Estado',
     landingDesc:'Remesas instantáneas de stablecoins entre fronteras con gas nativo USDC en la red Arc.',
-    updating:'Red Arc', done:'Listo',
+    updating:'Red Arc', done:'Listo', remitLockedMessage:'Los servicios de remesas están temporalmente deshabilitados. La firma de cartera está bloqueada para esta función.',
   },
   hi: {
     dashboard:'डैशबोर्ड', balance:'शेष', p2pSend:'P2P डायरेक्ट भेजें', invoices:'चालान', fxMarket:'FX बाज़ार', allActivity:'सभी गतिविधि', disconnect:'डिसकनेक्ट',
@@ -246,7 +247,7 @@ const TRANSLATIONS = {
     historyTitle:'पूर्ण लेनदेन बहीखाता',
     colType:'प्रकार', colAmount:'USDC राशि', colPayout:'भुगतान मूल्य', colCountry:'देश', colTxHash:'ट्रांजेक्शन हैश', colStatus:'स्थिति',
     landingDesc:'Arc नेटवर्क पर USDC नेटिव Gas द्वारा तत्काल क्रॉस-बॉर्डर स्टेबलकॉइन प्रेषण।',
-    updating:'Arc नेटवर्क', done:'ठीक है',
+    updating:'Arc नेटवर्क', done:'ठीक है', remitLockedMessage:'प्रेषण सेवा अस्थायी रूप से अक्षम है। इस सुविधा के लिए वॉलेट हस्ताक्षर लॉक है।',
   },
   tl: {
     dashboard:'Dashboard', balance:'Balanse', p2pSend:'P2P Direktang Pagpapadala', invoices:'Mga Invoice', fxMarket:'FX Merkado', allActivity:'Lahat ng Aktibidad', disconnect:'Idiskonekta',
@@ -274,7 +275,7 @@ const TRANSLATIONS = {
     historyTitle:'Kumpletong Talaan ng Transaksyon',
     colType:'Uri', colAmount:'Halaga ng USDC', colPayout:'Halaga ng Bayad', colCountry:'Bansa', colTxHash:'Hash ng Transaksyon', colStatus:'Katayuan',
     landingDesc:'Instant na cross-border stablecoin remittance gamit ang USDC native gas sa Arc network.',
-    updating:'Arc Network', done:'Tapos na',
+    updating:'Arc Network', done:'Tapos na', remitLockedMessage:'Ang mga serbisyo ng remittance ay pansamantalang hindi pinagana. Ang wallet signing ay naka-lock para sa tampok na ito.',
   },
   sw: {
     dashboard:'Dashibodi', balance:'Salio', p2pSend:'Tuma P2P Moja kwa Moja', invoices:'Ankara', fxMarket:'Soko la FX', allActivity:'Shughuli Zote', disconnect:'Ondoa Muunganisho',
@@ -302,7 +303,7 @@ const TRANSLATIONS = {
     historyTitle:'Daftari Kamili la Muamala',
     colType:'Aina', colAmount:'Kiasi cha USDC', colPayout:'Thamani ya Malipo', colCountry:'Nchi', colTxHash:'Hash ya Muamala', colStatus:'Hali',
     landingDesc:'Uhamishaji wa fedha wa haraka wa stablecoin kwa kutumia USDC native gas kwenye mtandao wa Arc.',
-    updating:'Mtandao wa Arc', done:'Imekamilika',
+    updating:'Mtandao wa Arc', done:'Imekamilika', remitLockedMessage:'Huduma za utumaji pesa zimezimwa kwa muda. Utiaji saini wa mkoba umefungwa kwa kipengele hiki.',
   },
 };
 
@@ -630,114 +631,7 @@ function App() {
   // Trigger cross-border Wise remittance
   const handleRemitTransfer = async (e) => {
     e.preventDefault();
-
-    if (!account) {
-      addToast('error', 'Please connect your wallet first.');
-      return;
-    }
-
-    if (!network?.isCorrect) {
-      addToast('error', 'Incorrect network. Please switch to Arc Testnet.');
-      return;
-    }
-
-    let cleanedRecipient = remitRecipient.trim();
-    if (/^[oO]x/i.test(cleanedRecipient)) {
-      cleanedRecipient = '0x' + cleanedRecipient.substring(2);
-      setRemitRecipient(cleanedRecipient);
-    }
-
-    if (!ethers.isAddress(cleanedRecipient)) {
-      addToast('error', 'Invalid EVM recipient address.');
-      return;
-    }
-
-    const parsedAmount = parseFloat(remitAmount);
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      addToast('error', 'Please enter a valid amount.');
-      return;
-    }
-
-    const balanceAvailable = parseFloat(balanceToUse === 'native' ? nativeBalance : erc20Balance);
-    if (parsedAmount > balanceAvailable) {
-      addToast('error', `Insufficient balance. Available: ${balanceAvailable} USDC.`);
-      return;
-    }
-
-    setIsRemitting(true);
-    try {
-      const providerEnv = window.okxwallet || window.ethereum;
-      const provider = new ethers.BrowserProvider(providerEnv);
-      const signer = await provider.getSigner();
-      
-      let txHash = '';
-      
-      if (remitTransferType === 'native') {
-        const valueInWei = ethers.parseEther(remitAmount);
-        addToast('info', `Sending native USDC transfer on Arc (18 decimals)...`);
-        const tx = await signer.sendTransaction({
-          to: remitRecipient,
-          value: valueInWei
-        });
-        txHash = tx.hash;
-        addToast('info', `Transaction submitted. Waiting for inclusion...`);
-        await tx.wait();
-      } else {
-        const usdcContract = new ethers.Contract(
-          USDC_SYSTEM_CONTRACT,
-          [
-            'function transfer(address, uint256) returns (bool)',
-            'function decimals() view returns (uint8)'
-          ],
-          signer
-        );
-        const decimals = await usdcContract.decimals().catch(() => 6);
-        const valueInUnits = ethers.parseUnits(remitAmount, decimals);
-        addToast('info', `Sending ERC-20 system contract transfer (6 decimals)...`);
-        const tx = await usdcContract.transfer(remitRecipient, valueInUnits);
-        txHash = tx.hash;
-        addToast('info', `Transaction submitted. Waiting for inclusion...`);
-        await tx.wait();
-      }
-
-      confetti({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.6 }
-      });
-
-      const localAmountFormatted = (parsedAmount * selectedCountry.rate).toLocaleString(undefined, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: selectedCountry.id === 'MX' || selectedCountry.id === 'IN' ? 2 : 0
-      });
-
-      const newTx = {
-        id: `tx-${Date.now()}`,
-        type: 'sent',
-        amount: parsedAmount.toFixed(2),
-        recipient: remitRecipient,
-        country: selectedCountry.name,
-        localAmount: localAmountFormatted,
-        localSymbol: selectedCountry.symbol,
-        status: 'completed',
-        hash: txHash,
-        time: 'Just now',
-        transferType: remitTransferType
-      };
-
-      setTransactions(prev => [newTx, ...prev]);
-      addToast('success', `Successfully remitted $${remitAmount} USDC to ${selectedCountry.name}!`);
-      
-      setRemitAmount('100');
-      setRemitRecipient('');
-      fetchBalances();
-
-    } catch (err) {
-      console.error('Transfer failed:', err);
-      addToast('error', `Transaction failed: ${err.reason || err.message}`);
-    } finally {
-      setIsRemitting(false);
-    }
+    addToast('error', t('remitLockedMessage'));
   };
 
   // Trigger P2P Direct Payout
@@ -1083,24 +977,24 @@ function App() {
                       {t('remittanceTitle')}
                     </h2>
 
-                    <div className="warning-box">
-                      <Info className="size-4 text-amber-400 shrink-0" />
-                      <span>Loading...</span>
+                    <div className="warning-box" style={{ backgroundColor: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.25)', color: 'hsl(var(--text-primary))', display: 'flex', alignItems: 'flex-start' }}>
+                      <Lock className="size-4 text-rose-500 shrink-0" style={{ marginTop: '2px' }} />
+                      <span>{t('remitLockedMessage')}</span>
                     </div>
 
                     <form onSubmit={handleRemitTransfer}>
                       <div className="wise-calculator">
                         
                         {/* Box 1: You Send */}
-                        <div className="wise-input-box">
+                        <div className="wise-input-box" style={{ opacity: 0.65 }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                             <label htmlFor="wise-send-amount" style={{ margin: 0 }}>{t('youSend')}</label>
                             <button 
                               type="button"
-                              onClick={() => setRemitAmount(nativeBalance)}
-                              style={{ background: 'none', border: 'none', padding: 0, fontSize: '11px', color: 'hsl(var(--text-secondary))', fontWeight: '500', cursor: 'pointer', fontFamily: 'var(--font-body)' }}
+                              style={{ background: 'none', border: 'none', padding: 0, fontSize: '11px', color: 'hsl(var(--text-muted))', fontWeight: '500', cursor: 'not-allowed', fontFamily: 'var(--font-body)' }}
+                              disabled
                             >
-                              {t('balance')}: <span style={{ color: 'hsl(var(--secondary))', fontWeight: 'bold' }}>{nativeBalance}</span> USDC
+                              {t('balance')}: <span style={{ color: 'hsl(var(--text-muted))', fontWeight: 'bold' }}>{nativeBalance}</span> USDC
                             </button>
                           </div>
                           <div className="wise-input-row">
@@ -1112,8 +1006,10 @@ function App() {
                               value={remitAmount}
                               onChange={(e) => setRemitAmount(e.target.value)}
                               required
+                              disabled
+                              style={{ cursor: 'not-allowed' }}
                             />
-                            <div className="wise-currency-trigger">
+                            <div className="wise-currency-trigger" style={{ cursor: 'not-allowed', opacity: 0.7 }}>
                               <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300E6C3' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 6v12M6 12h12'/%3E%3C/svg%3E" alt="USDC Logo" style={{ width: '16px' }} />
                               <span>USDC</span>
                             </div>
@@ -1121,7 +1017,7 @@ function App() {
                         </div>
 
                         {/* Connector flow detail tree */}
-                        <div className="wise-flow-tree">
+                        <div className="wise-flow-tree" style={{ opacity: 0.5 }}>
                           <div className="wise-flow-line"></div>
                           
                           <div className="wise-flow-node active">
@@ -1144,49 +1040,33 @@ function App() {
                         </div>
 
                         {/* Box 2: Recipient Gets */}
-                        <div className="wise-input-box" style={{ marginBottom: '20px' }}>
+                        <div className="wise-input-box" style={{ marginBottom: '20px', opacity: 0.65 }}>
                           <label>{t('recipientGets')}</label>
-                          <div className="wise-input-row" ref={wiseDropdownRef}>
+                          <div className="wise-input-row">
                             <input 
                               type="text" 
                               className="wise-number-input"
                               readOnly 
+                              disabled
                               value={remitResultValue}
+                              style={{ cursor: 'not-allowed' }}
                             />
                             <button
                               type="button"
                               className="wise-currency-trigger"
-                              onClick={() => setWiseDropdownOpen(!wiseDropdownOpen)}
+                              style={{ cursor: 'not-allowed', opacity: 0.7 }}
+                              disabled
                             >
                               <span style={{ fontSize: '18px', lineHeight: 1 }}>{selectedCountry.flag}</span>
                               <span>{selectedCountry.currency}</span>
                               <ChevronDown className="size-3.5" />
                             </button>
-
-                            {wiseDropdownOpen && (
-                              <div className="wise-select-dropdown">
-                                {COUNTRIES.map(c => (
-                                  <div
-                                    key={c.id}
-                                    className={`wise-select-option ${c.id === targetCountryId ? 'selected' : ''}`}
-                                    onClick={() => {
-                                      setTargetCountryId(c.id);
-                                      setActiveChartTab(c.currency);
-                                      setWiseDropdownOpen(false);
-                                    }}
-                                  >
-                                    <span style={{ fontSize: '18px', lineHeight: 1 }}>{c.flag}</span>
-                                    <span>{c.name} ({c.currency})</span>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
                           </div>
                         </div>
 
                       </div>
 
-                      <div className="form-group" style={{ marginBottom: '16px' }}>
+                      <div className="form-group" style={{ marginBottom: '16px', opacity: 0.65 }}>
                         <label className="form-label" htmlFor="calc-recipient-address">{t('recipientAddress')}</label>
                         <div className="input-container" style={{ margin: 0 }}>
                           <div className="input-icon-left">
@@ -1200,13 +1080,26 @@ function App() {
                             value={remitRecipient}
                             onChange={(e) => setRemitRecipient(e.target.value)}
                             required
+                            disabled
+                            style={{ cursor: 'not-allowed' }}
                           />
                         </div>
                       </div>
 
-                      <button type="submit" className="stripe-btn-primary" disabled={isRemitting}>
-                        <Send className="size-4" />
-                        {isRemitting ? t('processing') : `${t('remitFunds')} ${selectedCountry.name}`}
+                      <button 
+                        type="submit" 
+                        className="stripe-btn-primary" 
+                        disabled 
+                        style={{ 
+                          opacity: 0.6, 
+                          cursor: 'not-allowed', 
+                          background: 'linear-gradient(135deg, hsl(var(--border-color)) 0%, rgba(100,116,139,0.3) 100%)', 
+                          borderColor: 'hsla(var(--border-color), 0.8)',
+                          color: 'hsl(var(--text-muted))'
+                        }}
+                      >
+                        <Lock className="size-4 text-rose-500" />
+                        {t('remitFunds')} {selectedCountry.name}
                       </button>
                     </form>
                   </div>
