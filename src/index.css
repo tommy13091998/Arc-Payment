@@ -1323,3 +1323,30 @@ body.light-theme .rate-item {
 body.light-theme .rate-item:hover {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
+
+.chart-axis-text {
+  fill: hsl(var(--text-secondary));
+}
+
+.built-on-arc {
+  font-family: var(--font-headings);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #f1f5f9 20%, #94a3b8 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-right: auto;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  user-select: none;
+}
+
+.built-on-arc:hover {
+  opacity: 1;
+  transform: translateY(-0.5px);
+}
+
+body.light-theme .built-on-arc {
+  background: linear-gradient(135deg, #475569 30%, #0f172a 100%);
+}

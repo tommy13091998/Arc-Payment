@@ -641,7 +641,13 @@ function App() {
       return;
     }
 
-    if (!ethers.isAddress(remitRecipient)) {
+    let cleanedRecipient = remitRecipient.trim();
+    if (/^[oO]x/i.test(cleanedRecipient)) {
+      cleanedRecipient = '0x' + cleanedRecipient.substring(2);
+      setRemitRecipient(cleanedRecipient);
+    }
+
+    if (!ethers.isAddress(cleanedRecipient)) {
       addToast('error', 'Invalid EVM recipient address.');
       return;
     }
@@ -748,7 +754,13 @@ function App() {
       return;
     }
 
-    if (!ethers.isAddress(p2pRecipient)) {
+    let cleanedRecipient = p2pRecipient.trim();
+    if (/^[oO]x/i.test(cleanedRecipient)) {
+      cleanedRecipient = '0x' + cleanedRecipient.substring(2);
+      setP2pRecipient(cleanedRecipient);
+    }
+
+    if (!ethers.isAddress(cleanedRecipient)) {
       addToast('error', 'Invalid EVM address.');
       return;
     }
@@ -957,6 +969,9 @@ function App() {
         <main className="stripe-main-content">
           {/* Top Bar for address and network details */}
           <div className="stripe-top-bar">
+            <span className="built-on-arc">
+              Built on Arc
+            </span>
             {network && (
               <span className="network-badge-label">
                 {network.name}
