@@ -79,7 +79,7 @@ const LANGUAGES = [
 // i18n Translations
 const TRANSLATIONS = {
   en: {
-    dashboard:'Dashboard', p2pSend:'P2P Direct Send', invoices:'Invoices', fxMarket:'Live FX Market', allActivity:'All Activity', disconnect:'Disconnect',
+    dashboard:'Dashboard', balance:'Balance', p2pSend:'P2P Direct Send', invoices:'Invoices', fxMarket:'Live FX Market', allActivity:'All Activity', disconnect:'Disconnect',
     connectWallet:'Connect MetaMask', connectingWallet:'Connecting wallet...', availableBalance:'Available Balance', arcNetwork:'Arc network',
     receiveUsdc:'Receive USDC', requestInvoice:'Request Invoice', remittanceTitle:'Wise Remittance Calculator',
     demoWarning:'Simulated demo on Arc Testnet. Direct fiat conversion or local payouts are currently simulating mock rates.',
@@ -107,7 +107,7 @@ const TRANSLATIONS = {
     updating:'Arc network', done:'Done',
   },
   vi: {
-    dashboard:'Tổng quan', p2pSend:'Gửi P2P trực tiếp', invoices:'Hóa đơn', fxMarket:'Thị trường FX', allActivity:'Tất cả giao dịch', disconnect:'Ngắt kết nối',
+    dashboard:'Tổng quan', balance:'Số dư', p2pSend:'Gửi P2P trực tiếp', invoices:'Hóa đơn', fxMarket:'Thị trường FX', allActivity:'Tất cả giao dịch', disconnect:'Ngắt kết nối',
     connectWallet:'Kết nối MetaMask', connectingWallet:'Đang kết nối...', availableBalance:'Số dư khả dụng', arcNetwork:'Mạng Arc',
     receiveUsdc:'Nhận USDC', requestInvoice:'Tạo hóa đơn', remittanceTitle:'Công cụ chuyển tiền quốc tế',
     demoWarning:'Demo mô phỏng trên Arc Testnet. Tỷ giá quy đổi fiat hiện đang dùng tỷ giá giả lập.',
@@ -135,7 +135,7 @@ const TRANSLATIONS = {
     updating:'Mạng Arc', done:'Xong',
   },
   zh: {
-    dashboard:'控制台', p2pSend:'P2P 直接发送', invoices:'发票', fxMarket:'实时外汇市场', allActivity:'所有活动', disconnect:'断开连接',
+    dashboard:'控制台', balance:'余额', p2pSend:'P2P 直接发送', invoices:'发票', fxMarket:'实时外汇市场', allActivity:'所有活动', disconnect:'断开连接',
     connectWallet:'连接 MetaMask', connectingWallet:'连接中...', availableBalance:'可用余额', arcNetwork:'Arc 网络',
     receiveUsdc:'接收 USDC', requestInvoice:'请求发票', remittanceTitle:'汇款计算器',
     demoWarning:'Arc 测试网模拟演示。法币转换目前使用模拟汇率。',
@@ -163,7 +163,7 @@ const TRANSLATIONS = {
     updating:'Arc 网络', done:'完成',
   },
   ja: {
-    dashboard:'ダッシュボード', p2pSend:'P2P 直接送金', invoices:'請求書', fxMarket:'FX マーケット', allActivity:'全取引', disconnect:'切断',
+    dashboard:'ダッシュボード', balance:'残高', p2pSend:'P2P 直接送金', invoices:'請求書', fxMarket:'FX マーケット', allActivity:'全取引', disconnect:'切断',
     connectWallet:'MetaMask に接続', connectingWallet:'接続中...', availableBalance:'利用可能残高', arcNetwork:'Arc ネットワーク',
     receiveUsdc:'USDC を受け取る', requestInvoice:'請求書を作成', remittanceTitle:'送金計算機',
     demoWarning:'Arc テストネットのシミュレーションデモ。法定通貨の変換はモックレートで動作しています。',
@@ -191,7 +191,7 @@ const TRANSLATIONS = {
     updating:'Arc ネットワーク', done:'完了',
   },
   es: {
-    dashboard:'Panel', p2pSend:'Envío P2P Directo', invoices:'Facturas', fxMarket:'Mercado FX en Vivo', allActivity:'Toda la Actividad', disconnect:'Desconectar',
+    dashboard:'Panel', balance:'Saldo', p2pSend:'Envío P2P Directo', invoices:'Facturas', fxMarket:'Mercado FX en Vivo', allActivity:'Toda la Actividad', disconnect:'Desconectar',
     connectWallet:'Conectar MetaMask', connectingWallet:'Conectando...', availableBalance:'Saldo Disponible', arcNetwork:'Red Arc',
     receiveUsdc:'Recibir USDC', requestInvoice:'Solicitar Factura', remittanceTitle:'Calculadora de Remesas',
     demoWarning:'Demo simulada en Arc Testnet. Las conversiones a moneda local usan tasas ficticias.',
@@ -219,7 +219,7 @@ const TRANSLATIONS = {
     updating:'Red Arc', done:'Listo',
   },
   hi: {
-    dashboard:'डैशबोर्ड', p2pSend:'P2P डायरेक्ट भेजें', invoices:'चालान', fxMarket:'FX बाज़ार', allActivity:'सभी गतिविधि', disconnect:'डिसकनेक्ट',
+    dashboard:'डैशबोर्ड', balance:'शेष', p2pSend:'P2P डायरेक्ट भेजें', invoices:'चालान', fxMarket:'FX बाज़ार', allActivity:'सभी गतिविधि', disconnect:'डिसकनेक्ट',
     connectWallet:'MetaMask कनेक्ट करें', connectingWallet:'कनेक्ट हो रहा है...', availableBalance:'उपलब्ध शेष', arcNetwork:'Arc नेटवर्क',
     receiveUsdc:'USDC प्राप्त करें', requestInvoice:'चालान अनुरोध', remittanceTitle:'प्रेषण कैलकुलेटर',
     demoWarning:'Arc Testnet पर सिम्युलेटेड डेमो। फ़िएट रूपांतरण मॉक दरों का उपयोग कर रहा है।',
@@ -247,7 +247,7 @@ const TRANSLATIONS = {
     updating:'Arc नेटवर्क', done:'ठीक है',
   },
   tl: {
-    dashboard:'Dashboard', p2pSend:'P2P Direktang Pagpapadala', invoices:'Mga Invoice', fxMarket:'FX Merkado', allActivity:'Lahat ng Aktibidad', disconnect:'Idiskonekta',
+    dashboard:'Dashboard', balance:'Balanse', p2pSend:'P2P Direktang Pagpapadala', invoices:'Mga Invoice', fxMarket:'FX Merkado', allActivity:'Lahat ng Aktibidad', disconnect:'Idiskonekta',
     connectWallet:'Ikonekta ang MetaMask', connectingWallet:'Nagkokonekta...', availableBalance:'Available na Balanse', arcNetwork:'Arc Network',
     receiveUsdc:'Tumanggap ng USDC', requestInvoice:'Humiling ng Invoice', remittanceTitle:'Kalkulador ng Remittance',
     demoWarning:'Simuladong demo sa Arc Testnet. Ang fiat conversion ay gumagamit ng mock rates.',
@@ -275,7 +275,7 @@ const TRANSLATIONS = {
     updating:'Arc Network', done:'Tapos na',
   },
   sw: {
-    dashboard:'Dashibodi', p2pSend:'Tuma P2P Moja kwa Moja', invoices:'Ankara', fxMarket:'Soko la FX', allActivity:'Shughuli Zote', disconnect:'Ondoa Muunganisho',
+    dashboard:'Dashibodi', balance:'Salio', p2pSend:'Tuma P2P Moja kwa Moja', invoices:'Ankara', fxMarket:'Soko la FX', allActivity:'Shughuli Zote', disconnect:'Ondoa Muunganisho',
     connectWallet:'Unganisha MetaMask', connectingWallet:'Inaunganisha...', availableBalance:'Salio Linaloweza Kutumika', arcNetwork:'Mtandao wa Arc',
     receiveUsdc:'Pokea USDC', requestInvoice:'Omba Ankara', remittanceTitle:'Kikokotoo cha Uhamishaji',
     demoWarning:'Onyesho la mfano kwenye Arc Testnet. Ubadilishaji wa fedha unatumia viwango vya mazoezi.',
@@ -1034,7 +1034,16 @@ function App() {
                         
                         {/* Box 1: You Send */}
                         <div className="wise-input-box">
-                          <label htmlFor="wise-send-amount">{t('youSend')}</label>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                            <label htmlFor="wise-send-amount" style={{ margin: 0 }}>{t('youSend')}</label>
+                            <button 
+                              type="button"
+                              onClick={() => setRemitAmount(nativeBalance)}
+                              style={{ background: 'none', border: 'none', padding: 0, fontSize: '11px', color: 'hsl(var(--text-secondary))', fontWeight: '500', cursor: 'pointer', fontFamily: 'var(--font-body)' }}
+                            >
+                              {t('balance')}: <span style={{ color: 'hsl(var(--secondary))', fontWeight: 'bold' }}>{nativeBalance}</span> USDC
+                            </button>
+                          </div>
                           <div className="wise-input-row">
                             <input 
                               type="number" 
@@ -1326,7 +1335,16 @@ function App() {
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label" htmlFor="p2p-amount">{t('amountLabel')}</label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <label className="form-label" htmlFor="p2p-amount" style={{ marginBottom: 0 }}>{t('amountLabel')}</label>
+                    <button 
+                      type="button"
+                      onClick={() => setP2pAmount(nativeBalance)}
+                      style={{ background: 'none', border: 'none', padding: 0, fontSize: '11px', color: 'hsl(var(--text-secondary))', fontWeight: '500', cursor: 'pointer', fontFamily: 'var(--font-body)' }}
+                    >
+                      {t('balance')}: <span style={{ color: 'hsl(var(--secondary))', fontWeight: 'bold' }}>{nativeBalance}</span> USDC
+                    </button>
+                  </div>
                   <div className="input-container">
                     <div className="input-icon-left">
                       <DollarSign className="size-4" />
