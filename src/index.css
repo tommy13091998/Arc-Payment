@@ -40,6 +40,7 @@ body {
   color: hsl(var(--text-primary));
   min-height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -101,7 +102,8 @@ body {
 .app-container {
   display: flex;
   min-height: 100vh;
-  width: 100vw;
+  width: 100%;
+  max-width: 100%;
   position: relative;
 }
 
@@ -193,6 +195,8 @@ body {
   min-height: 100vh;
   position: relative;
   background: transparent;
+  width: calc(100% - 260px);
+  max-width: calc(100% - 260px);
 }
 
 /* Top Navbar for wallet and connection details */
@@ -964,14 +968,13 @@ body {
   background-color: rgba(251, 191, 36, 0.05);
   border: 1px dashed rgba(251, 191, 36, 0.25);
   border-radius: 10px;
-  padding: 12px 16px;
+  padding: 8px 14px;
   margin-bottom: 16px;
-  font-size: 12px;
+  font-size: 12.5px;
   color: hsl(var(--text-secondary));
-  line-height: 1.4;
-  display: flex;
+  display: inline-flex;
   gap: 8px;
-  align-items: flex-start;
+  align-items: center;
 }
 
 /* FX Rate Grid */
@@ -1162,9 +1165,53 @@ body {
   .stripe-main-content {
     margin-left: 68px;
     padding: 24px;
+    width: calc(100% - 68px);
+    max-width: calc(100% - 68px);
   }
   
   .sidebar-header {
     justify-content: center;
   }
+}
+
+@media (max-width: 640px) {
+  .stripe-top-bar {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .rate-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .stripe-main-content {
+    padding: 16px;
+  }
+  .rate-grid {
+    grid-template-columns: 1fr;
+  }
+  .stripe-card {
+    padding: 16px;
+  }
+  .balance-large-amount {
+    font-size: 30px;
+  }
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes spin-loader {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin-animation {
+  animation: spin-loader 0.8s linear infinite;
 }

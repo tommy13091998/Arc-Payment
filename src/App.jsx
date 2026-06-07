@@ -336,6 +336,7 @@ function App() {
   const [generatedInvoiceLink, setGeneratedInvoiceLink] = useState('');
   
   // Copy flags & Modals
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [copiedInvoice, setCopiedInvoice] = useState(false);
   const [receiveModalOpen, setReceiveModalOpen] = useState(false);
@@ -363,65 +364,14 @@ function App() {
     const saved = localStorage.getItem('arc_pay_txs');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Filter out demo transactions
+        return parsed.filter(tx => !['tx-1', 'tx-2', 'tx-3', 'tx-4'].includes(tx.id));
       } catch (e) {
         console.error('Failed parsing cached transactions:', e);
       }
     }
-    return [
-      {
-        id: 'tx-1',
-        type: 'sent',
-        amount: '500.00',
-        recipient: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
-        country: 'Vietnam',
-        localAmount: '12,710,250',
-        localSymbol: '₫',
-        status: 'completed',
-        hash: '0x72baee1c79e60249cd5e810a9cfabfe31ff95877f807be7bde91c78479e0bf5a',
-        time: '2 hours ago',
-        transferType: 'native'
-      },
-      {
-        id: 'tx-2',
-        type: 'received',
-        amount: '120.00',
-        sender: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
-        country: 'Global',
-        localAmount: '120',
-        localSymbol: '$',
-        status: 'completed',
-        hash: '0x992451f28b7e28a7e0bfef5a72baee1c79e60249cd5e810a9cfabe207be7bde',
-        time: '5 hours ago',
-        transferType: 'native'
-      },
-      {
-        id: 'tx-3',
-        type: 'sent',
-        amount: '350.00',
-        recipient: '0x90F79bf6EB2c4f870365E785982E1f101E93b906',
-        country: 'India',
-        localAmount: '29,207',
-        localSymbol: '₹',
-        status: 'completed',
-        hash: '0x101E93b90672baee1c79e60249cd5e80a9cfabfe31ff95877f807be7bde91c78',
-        time: '1 day ago',
-        transferType: 'erc20'
-      },
-      {
-        id: 'tx-4',
-        type: 'sent',
-        amount: '1,000.00',
-        recipient: '0x15d34AAf54a67C6810E7977f0417A30085E8E5e5',
-        country: 'Philippines',
-        localAmount: '58,300',
-        localSymbol: '₱',
-        status: 'completed',
-        hash: '0x0417A30085E8E5e572baee1c79e60249cd5e810a9cfabfe31ff95877f807be7',
-        time: '2 days ago',
-        transferType: 'native'
-      }
-    ];
+    return [];
   });
 
   useEffect(() => {
@@ -619,6 +569,14 @@ function App() {
     } catch (err) {
       console.error('Error fetching balance:', err);
     }
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchBalances();
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1000);
   };
 
   // Copy helpers
@@ -1067,7 +1025,7 @@ function App() {
                     </h2>
 
                     <div className="warning-box">
-                      <Info className="size-4 text-amber-400 shrink-0" style={{ marginTop: '2px' }} />
+                      <Info className="size-4 text-amber-400 shrink-0" />
                       <span>Loading...</span>
                     </div>
 
@@ -1256,9 +1214,9 @@ function App() {
                     type="button" 
                     className="stripe-btn-secondary" 
                     style={{ padding: '6px 12px', fontSize: '11px' }}
-                    onClick={fetchBalances}
+                    onClick={handleRefresh}
                   >
-                    <RefreshCw className="size-3" />
+                    <RefreshCw className={`size-3 ${isRefreshing ? 'spin-animation' : ''}`} />
                     {t('refresh')}
                   </button>
                 </div>
@@ -1558,9 +1516,9 @@ function App() {
                 <button 
                   type="button" 
                   className="stripe-btn-secondary" 
-                  onClick={fetchBalances}
+                  onClick={handleRefresh}
                 >
-                  <RefreshCw className="size-4 mr-2" />
+                  <RefreshCw className={`size-4 mr-2 ${isRefreshing ? 'spin-animation' : ''}`} />
                   Refresh
                 </button>
               </div>
