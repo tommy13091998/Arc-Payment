@@ -89,12 +89,12 @@ const TRANSLATIONS = {
     remitFunds:'Remit Funds to', processing:'Processing Settlement...',
     recentRemittances:'Recent Remittances', refresh:'Refresh',
     globalRoute:'Global Settlement Route', fxSparkline:'FX Sparkline Chart',
-    p2pTitle:'Intra-chain USDC Payout (Cash App style)',
+    p2pTitle:'Intra-chain USDC Payout',
     p2pDesc:'Transfer USDC directly to another EVM address on the Arc Network. Gas fees will be settled directly in USDC.',
     recipientAddressLabel:'Recipient Address (EVM / Address)', amountLabel:'Amount (USDC)', transferModeLabel:'Transfer Mode',
     nativeGasFull:'Native Gas (18 decimals)', erc20ContractFull:'ERC20 Contract (6 decimals)',
     sendDirect:'Send USDC Direct', broadcasting:'Broadcasting direct tx...',
-    invoiceTitle:'USDC Request Invoice Generator (PayPal style)',
+    invoiceTitle:'USDC Request Invoice Generator',
     invoiceDesc:'Fill in the details to generate a payment request. Other users can copy this link and pay you instantly on the Arc network.',
     requestAmountLabel:'Request Amount (USDC)', memoLabel:'Requested Memo / Services', memoPlaceholder:'e.g. Website development contract',
     generateInvoice:'Generate Invoice Link & QR',
@@ -117,12 +117,12 @@ const TRANSLATIONS = {
     remitFunds:'Chuyển tiền tới', processing:'Đang xử lý...',
     recentRemittances:'Giao dịch gần đây', refresh:'Làm mới',
     globalRoute:'Tuyến thanh toán toàn cầu', fxSparkline:'Biểu đồ tỷ giá',
-    p2pTitle:'Chuyển USDC trong chuỗi (kiểu Cash App)',
+    p2pTitle:'Chuyển USDC trong chuỗi',
     p2pDesc:'Chuyển USDC trực tiếp đến địa chỉ EVM khác trên mạng Arc. Phí gas được thanh toán bằng USDC.',
     recipientAddressLabel:'Địa chỉ người nhận (EVM)', amountLabel:'Số lượng (USDC)', transferModeLabel:'Hình thức chuyển',
     nativeGasFull:'Gas gốc (18 số thập phân)', erc20ContractFull:'Hợp đồng ERC20 (6 số thập phân)',
     sendDirect:'Gửi USDC trực tiếp', broadcasting:'Đang phát giao dịch...',
-    invoiceTitle:'Tạo hóa đơn yêu cầu USDC (kiểu PayPal)',
+    invoiceTitle:'Tạo hóa đơn yêu cầu USDC',
     invoiceDesc:'Điền thông tin để tạo yêu cầu thanh toán. Người khác có thể sao chép liên kết và thanh toán ngay.',
     requestAmountLabel:'Số tiền yêu cầu (USDC)', memoLabel:'Ghi chú / Dịch vụ', memoPlaceholder:'VD: Hợp đồng phát triển website',
     generateInvoice:'Tạo liên kết & mã QR',
@@ -229,12 +229,12 @@ const TRANSLATIONS = {
     remitFunds:'धन भेजें', processing:'प्रोसेस हो रहा है...',
     recentRemittances:'हाल के प्रेषण', refresh:'रिफ्रेश',
     globalRoute:'ग्लोबल सेटलमेंट रूट', fxSparkline:'FX स्पार्कलाइन चार्ट',
-    p2pTitle:'इंट्रा-चेन USDC पेमेंट (Cash App स्टाइल)',
+    p2pTitle:'इंट्रा-चेन USDC पेमेंट',
     p2pDesc:'Arc नेटवर्क पर किसी अन्य EVM पते पर USDC ट्रांसफर करें।',
     recipientAddressLabel:'प्राप्तकर्ता पता (EVM)', amountLabel:'राशि (USDC)', transferModeLabel:'ट्रांसफर मोड',
     nativeGasFull:'नेटिव गैस (18 दशमलव)', erc20ContractFull:'ERC20 कॉन्ट्रैक्ट (6 दशमलव)',
     sendDirect:'USDC डायरेक्ट भेजें', broadcasting:'ट्रांजेक्शन ब्रॉडकास्ट हो रहा है...',
-    invoiceTitle:'USDC चालान जेनरेटर (PayPal स्टाइल)',
+    invoiceTitle:'USDC चालान जेनरेटर',
     invoiceDesc:'भुगतान अनुरोध बनाने के लिए विवरण भरें। अन्य उपयोगकर्ता लिंक कॉपी करके तुरंत भुगतान कर सकते हैं।',
     requestAmountLabel:'अनुरोध राशि (USDC)', memoLabel:'मेमो / सेवाएं', memoPlaceholder:'उदा. वेबसाइट विकास अनुबंध',
     generateInvoice:'चालान लिंक और QR बनाएं',
@@ -257,12 +257,12 @@ const TRANSLATIONS = {
     remitFunds:'Magpadala ng Pondo sa', processing:'Pinoproseso...',
     recentRemittances:'Mga Kamakailang Remittance', refresh:'I-refresh',
     globalRoute:'Global Settlement Route', fxSparkline:'FX Sparkline Chart',
-    p2pTitle:'Intra-chain na USDC Bayad (Cash App estilo)',
+    p2pTitle:'Intra-chain na USDC Bayad',
     p2pDesc:'Ilipat ang USDC nang direkta sa ibang EVM address sa Arc Network.',
     recipientAddressLabel:'Address ng Tatanggap (EVM)', amountLabel:'Halaga (USDC)', transferModeLabel:'Mode ng Paglipat',
     nativeGasFull:'Native Gas (18 decimal)', erc20ContractFull:'ERC20 Kontrata (6 decimal)',
     sendDirect:'Direktang Magpadala ng USDC', broadcasting:'Nagbo-broadcast ng transaksyon...',
-    invoiceTitle:'USDC Invoice Generator (PayPal estilo)',
+    invoiceTitle:'USDC Invoice Generator',
     invoiceDesc:'Punan ang mga detalye para makabuo ng kahilingan sa pagbabayad.',
     requestAmountLabel:'Halagang Hinihingi (USDC)', memoLabel:'Memo / Mga Serbisyo', memoPlaceholder:'Hal. Kontrata sa pagbuo ng website',
     generateInvoice:'Bumuo ng Invoice Link at QR',
@@ -285,12 +285,12 @@ const TRANSLATIONS = {
     remitFunds:'Hamisha Fedha kwenda', processing:'Inachakata...',
     recentRemittances:'Uhamishaji wa Hivi Karibuni', refresh:'Onyesha upya',
     globalRoute:'Njia ya Makubaliano ya Kimataifa', fxSparkline:'Chati ya FX',
-    p2pTitle:'Malipo ya USDC Ndani ya Mnyororo (mtindo wa Cash App)',
+    p2pTitle:'Malipo ya USDC Ndani ya Mnyororo',
     p2pDesc:'Hamisha USDC moja kwa moja kwa anwani nyingine ya EVM kwenye Mtandao wa Arc.',
     recipientAddressLabel:'Anwani ya Mpokeaji (EVM)', amountLabel:'Kiasi (USDC)', transferModeLabel:'Hali ya Uhamishaji',
     nativeGasFull:'Gas ya Asili (desimali 18)', erc20ContractFull:'Mkataba wa ERC20 (desimali 6)',
     sendDirect:'Tuma USDC Moja kwa Moja', broadcasting:'Inasambaza muamala...',
-    invoiceTitle:'Jenereta ya Ankara ya USDC (mtindo wa PayPal)',
+    invoiceTitle:'Jenereta ya Ankara ya USDC',
     invoiceDesc:'Jaza maelezo ili kuunda ombi la malipo. Watumiaji wengine wanaweza kulipa mara moja.',
     requestAmountLabel:'Kiasi Kinachoombwa (USDC)', memoLabel:'Kumbukumbu / Huduma', memoPlaceholder:'Mf. Mkataba wa maendeleo ya tovuti',
     generateInvoice:'Tengeneza Kiungo cha Ankara na QR',
@@ -1032,26 +1032,9 @@ function App() {
                     </div>
                     <div className="balance-display-box">
                       <span className="balance-large-amount">
-                        ${balanceToUse === 'native' ? nativeBalance : erc20Balance}
+                        ${nativeBalance}
                       </span>
                       <span className="balance-large-currency">USDC</span>
-                    </div>
-
-                    <div className="balance-selector-buttons">
-                      <button 
-                        type="button" 
-                        className={`balance-selector-btn ${balanceToUse === 'native' ? 'active' : ''}`}
-                        onClick={() => setBalanceToUse('native')}
-                      >
-                        Native: ${nativeBalance} USDC
-                      </button>
-                      <button 
-                        type="button" 
-                        className={`balance-selector-btn ${balanceToUse === 'erc20' ? 'active' : ''}`}
-                        onClick={() => setBalanceToUse('erc20')}
-                      >
-                        ERC-20: ${erc20Balance} USDC
-                      </button>
                     </div>
 
                     <div style={{ display: 'flex', gap: '12px' }}>
@@ -1085,7 +1068,7 @@ function App() {
 
                     <div className="warning-box">
                       <Info className="size-4 text-amber-400 shrink-0" style={{ marginTop: '2px' }} />
-                      <span>{t('demoWarning')}</span>
+                      <span>Loading...</span>
                     </div>
 
                     <form onSubmit={handleRemitTransfer}>
@@ -1131,20 +1114,7 @@ function App() {
                             </div>
                           </div>
                           
-                          <div className="wise-flow-node">
-                            <div className="wise-flow-bullet"></div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', flex: 1 }}>
-                              <span className="wise-flow-label">{t('transferMode')}:</span>
-                              <span className="wise-flow-value">
-                                <label style={{ marginRight: '6px', cursor: 'pointer' }}>
-                                  <input type="radio" name="calc-tx-type" checked={remitTransferType === 'native'} onChange={() => setRemitTransferType('native')}/> {t('gasNative')}
-                                </label>
-                                <label style={{ cursor: 'pointer' }}>
-                                  <input type="radio" name="calc-tx-type" checked={remitTransferType === 'erc20'} onChange={() => setRemitTransferType('erc20')}/> {t('erc20Sys')}
-                                </label>
-                              </span>
-                            </div>
-                          </div>
+
                         </div>
 
                         {/* Box 2: Recipient Gets */}
@@ -1397,41 +1367,23 @@ function App() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '12px' }}>
-                  <div className="form-group">
-                    <label className="form-label" htmlFor="p2p-amount">{t('amountLabel')}</label>
-                    <div className="input-container">
-                      <div className="input-icon-left">
-                        <DollarSign className="size-4" />
-                      </div>
-                      <input 
-                        type="number" 
-                        id="p2p-amount"
-                        className="input-field" 
-                        placeholder="0.00" 
-                        step="0.01"
-                        min="0.01"
-                        value={p2pAmount}
-                        onChange={(e) => setP2pAmount(e.target.value)}
-                        required
-                      />
+                <div className="form-group">
+                  <label className="form-label" htmlFor="p2p-amount">{t('amountLabel')}</label>
+                  <div className="input-container">
+                    <div className="input-icon-left">
+                      <DollarSign className="size-4" />
                     </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label" htmlFor="p2p-tx-type">{t('transferModeLabel')}</label>
-                    <div style={{ position: 'relative' }}>
-                      <select 
-                        id="p2p-tx-type"
-                        className="input-field" 
-                        style={{ paddingLeft: '12px' }}
-                        value={p2pTransferType}
-                        onChange={(e) => setP2pTransferType(e.target.value)}
-                      >
-                        <option value="native">{t('nativeGasFull')}</option>
-                        <option value="erc20">{t('erc20ContractFull')}</option>
-                      </select>
-                    </div>
+                    <input 
+                      type="number" 
+                      id="p2p-amount"
+                      className="input-field" 
+                      placeholder="0.00" 
+                      step="0.01"
+                      min="0.01"
+                      value={p2pAmount}
+                      onChange={(e) => setP2pAmount(e.target.value)}
+                      required
+                    />
                   </div>
                 </div>
 
