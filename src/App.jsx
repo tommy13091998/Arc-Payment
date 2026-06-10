@@ -168,6 +168,7 @@ function App() {
   const [socialPrivateKey, setSocialPrivateKey] = useState(() => localStorage.getItem('arc_pay_social_key') || '');
   const [socialAddress, setSocialAddress] = useState(() => localStorage.getItem('arc_pay_social_address') || '');
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isSocialLoggingIn, setIsSocialLoggingIn] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [socialEmailInput, setSocialEmailInput] = useState('');
   const [copiedAddress, setCopiedAddress] = useState(false);
