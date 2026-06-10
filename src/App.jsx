@@ -102,6 +102,13 @@ const TRANSLATIONS = {
     bridgeDesc: 'Bridge USDC between Ethereum Sepolia, Base Testnet, Solana Devnet, and Arc Network securely using Circle\'s CCTP.',
     faucetTitle: 'Arc USDC Developer Faucet',
     faucetDesc: 'Get test USDC directly to your wallet for testing smart contracts and payments.',
+    youSend: 'You send',
+    recipientGets: 'Recipient gets',
+    gasFee: 'Gas / Remit Fee',
+    conversionRate: 'Conversion Rate',
+    recipientAddress: 'Recipient EVM Address',
+    recipientPlaceholder: '0x recipient address',
+    remitFunds: 'Remit Funds to',
   },
   vi: {
     dashboard: 'Tổng quan',
@@ -136,6 +143,13 @@ const TRANSLATIONS = {
     bridgeDesc: 'Cầu nối USDC giữa Ethereum Sepolia, Base Testnet, Solana Devnet và Mạng Arc bằng Circle CCTP.',
     faucetTitle: 'Vòi USDC Arc Developer',
     faucetDesc: 'Nhận USDC thử nghiệm trực tiếp về ví của bạn để thử nghiệm hợp đồng thông minh và thanh toán.',
+    youSend: 'Bạn gửi',
+    recipientGets: 'Người nhận nhận',
+    gasFee: 'Phí Gas / Kiều hối',
+    conversionRate: 'Tỷ giá chuyển đổi',
+    recipientAddress: 'Địa chỉ EVM người nhận',
+    recipientPlaceholder: 'Địa chỉ ví 0x người nhận',
+    remitFunds: 'Chuyển tiền tới',
   }
 };
 
@@ -218,8 +232,51 @@ function App() {
   });
   const [devConsoleOpen, setDevConsoleOpen] = useState(false);
 
+  // Wise Remittance & Charts States
+  const [targetCountryId, setTargetCountryId] = useState('VN');
+  const [remitAmount, setRemitAmount] = useState('100');
+  const [remitRecipient, setRemitRecipient] = useState('');
+  const [wiseDropdownOpen, setWiseDropdownOpen] = useState(false);
+  const [activeChartTab, setActiveChartTab] = useState('VND');
+
   // References
   const langDropdownRef = useRef(null);
+  const wiseDropdownRef = useRef(null);
+
+  // Click outside to close dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (langDropdownRef.current && !langDropdownRef.current.contains(event.target)) {
+        setLangDropdownOpen(false);
+      }
+      if (wiseDropdownRef.current && !wiseDropdownRef.current.contains(event.target)) {
+        setWiseDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Wise Calculator & Charts Helpers
+  const selectedCountry = COUNTRIES.find(c => c.id === targetCountryId) || COUNTRIES[0];
+  const remitResultValue = (parseFloat(remitAmount) || 0) * selectedCountry.rate;
+
+  const renderChartPath = () => {
+    const data = HISTORICAL_RATES[activeChartTab] || HISTORICAL_RATES.VND;
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+    const padding = (max - min) * 0.1 || 10;
+    const yMin = min - padding;
+    const yMax = max + padding;
+    
+    const points = data.map((val, index) => {
+      const x = (index / (data.length - 1)) * 340 + 40; // width of 340, offset 40
+      const y = 140 - ((val - yMin) / (yMax - yMin)) * 100; // height of 140, offset 100
+      return `${x},${y}`;
+    });
+
+    return `M ${points.join(' L ')}`;
+  };
 
   // i18n Translation Helper
   const t = (key) => TRANSLATIONS[selectedLang.code]?.[key] ?? TRANSLATIONS.en[key] ?? key;
@@ -501,6 +558,44 @@ function App() {
     setTransactions(prev => [faucetTx, ...prev]);
   };
 
+  // Trigger Wise Remittance Simulation
+  const handleRemitTransfer = (e) => {
+    e.preventDefault();
+    if (!account) {
+      addToast('error', 'Connect your wallet first.');
+      return;
+    }
+
+    const cleanedRecipient = remitRecipient.trim();
+    if (!ethers.isAddress(cleanedRecipient)) {
+      addToast('error', 'Invalid EVM address.');
+      return;
+    }
+
+    const parsedAmt = parseFloat(remitAmount);
+    if (isNaN(parsedAmt) || parsedAmt <= 0) {
+      addToast('error', 'Please enter a valid amount.');
+      return;
+    }
+
+    const totalBalance = parseFloat(nativeBalance) + mockUSDC;
+    if (parsedAmt > totalBalance) {
+      addToast('error', `Insufficient balance. Available: ${totalBalance.toFixed(2)} USDC`);
+      return;
+    }
+
+    setSimulationTxData({
+      to: cleanedRecipient,
+      amount: parsedAmt,
+      memo: `Remittance to ${selectedCountry.name} (${selectedCountry.currency})`,
+      type: 'remit',
+      country: selectedCountry,
+      originalData: { recipient: cleanedRecipient, amount: parsedAmt, targetCountryId }
+    });
+    setSimulationModalOpen(true);
+    runSimulation(cleanedRecipient, parsedAmt);
+  };
+
   // Trigger P2P Direct Payout Simulation
   const startP2pSimulation = (e) => {
     e.preventDefault();
@@ -566,12 +661,12 @@ function App() {
     setIsSimulating(false);
   };
 
-  // Sign & Broadcast P2P Transaction
+  // Sign & Broadcast P2P/Remittance Transaction
   const broadcastP2pTransaction = async () => {
     if (!simulationTxData) return;
-    const { to, amount, memo } = simulationTxData;
+    const { to, amount, memo, type } = simulationTxData;
     setIsSendingTx(true);
-    logDev('info', 'Broadcasting transaction to network...');
+    logDev('info', `Broadcasting ${type === 'remit' ? 'remittance' : 'transaction'} to network...`);
     
     try {
       let hash = '0x' + Array.from({length: 40}, () => Math.floor(Math.random()*16).toString(16)).join('');
@@ -617,25 +712,42 @@ function App() {
 
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
 
+      // Determine transaction details based on type
+      const isRemit = type === 'remit';
+      const txCountry = isRemit ? simulationTxData.country.name : 'Intra-chain';
+      const txLocalSymbol = isRemit ? simulationTxData.country.symbol : '$';
+      
+      let txLocalAmount = amount.toFixed(2);
+      if (isRemit) {
+        const localVal = amount * simulationTxData.country.rate;
+        txLocalAmount = simulationTxData.country.id === 'IN' || simulationTxData.country.id === 'PH'
+          ? localVal.toFixed(2)
+          : Math.round(localVal).toLocaleString();
+      }
+
       const newTx = {
         id: `tx-${Date.now()}`,
         type: 'sent',
         amount: amount.toFixed(2),
         recipient: to,
-        country: 'Intra-chain',
-        localAmount: amount.toFixed(2),
-        localSymbol: '$',
+        country: txCountry,
+        localAmount: txLocalAmount,
+        localSymbol: txLocalSymbol,
         status: 'completed',
         hash: hash,
         time: 'Just now',
-        memo: memo || 'USDC P2P Transfer'
+        memo: memo || (isRemit ? `Remittance to ${simulationTxData.country.name}` : 'USDC P2P Transfer')
       };
 
       setTransactions(prev => [newTx, ...prev]);
-      addToast('success', `Sent ${amount} USDC to ${to.substring(0, 6)}...`);
+      
+      const successMsg = isRemit 
+        ? `Remitted ${amount} USDC to ${simulationTxData.country.name}!` 
+        : `Sent ${amount} USDC to ${to.substring(0, 6)}...`;
+      addToast('success', successMsg);
       logDev('success', `Transaction complete: Sent ${amount} USDC. TxHash: ${hash}`);
       
-      // Auto-trigger merchant receipt if they pay a merchant standee / split address
+      // Auto-trigger merchant receipt
       const receiptData = {
         txId: newTx.id,
         sender: account,
@@ -643,7 +755,7 @@ function App() {
         amount: amount.toFixed(2),
         gasPaid: sponsoredGas ? '0.00 USDC' : '0.0042 USDC',
         date: new Date().toLocaleString(),
-        memo: memo || 'P2P Payment',
+        memo: newTx.memo,
         hash: hash
       };
       setActiveReceipt(receiptData);
@@ -653,6 +765,8 @@ function App() {
       setP2pAmount('');
       setP2pRecipient('');
       setP2pMemo('');
+      setRemitAmount('100');
+      setRemitRecipient('');
       setSimulationModalOpen(false);
       setSimulationTxData(null);
       fetchBalances();
@@ -1167,6 +1281,144 @@ function App() {
                     </div>
                   </div>
 
+                  {/* Wise-style Remittance Calculator */}
+                  <div className="stripe-card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                      <h2>
+                        <Send className="text-secondary size-5" style={{ color: 'hsl(var(--secondary))' }} />
+                        Wise Remittance Calculator
+                      </h2>
+                      <span style={{ fontSize: '11px', color: 'hsl(var(--text-muted))', fontWeight: 'bold' }}>Arc Testnet Rate</span>
+                    </div>
+
+                    <form onSubmit={handleRemitTransfer}>
+                      <div className="wise-calculator">
+                        
+                        {/* Box 1: You Send */}
+                        <div className="wise-input-box">
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                            <label htmlFor="wise-send-amount" style={{ margin: 0 }}>{t('youSend')}</label>
+                            <span style={{ fontSize: '11.5px', color: 'hsl(var(--text-secondary))' }}>
+                              {t('availableBalance')}: <strong style={{ color: 'hsl(var(--secondary))' }}>{(parseFloat(nativeBalance) + mockUSDC).toFixed(2)} USDC</strong>
+                            </span>
+                          </div>
+                          <div className="wise-input-row">
+                            <input 
+                              type="number" 
+                              id="wise-send-amount"
+                              className="wise-number-input"
+                              placeholder="0.00" 
+                              value={remitAmount}
+                              onChange={(e) => setRemitAmount(e.target.value)}
+                              min="0.01"
+                              step="0.01"
+                              required
+                            />
+                            <div className="wise-currency-trigger" style={{ cursor: 'default' }}>
+                              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300E6C3' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 6v12M6 12h12'/%3E%3C/svg%3E" alt="USDC Logo" style={{ width: '16px' }} />
+                              <span>USDC</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Connector flow detail tree */}
+                        <div className="wise-flow-tree">
+                          <div className="wise-flow-line"></div>
+                          
+                          <div className="wise-flow-node active">
+                            <div className="wise-flow-bullet"></div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', flex: 1 }}>
+                              <span className="wise-flow-label">{t('gasFee')}:</span>
+                              <span className="wise-flow-value highlight-green">0.00 USDC Promo</span>
+                            </div>
+                          </div>
+
+                          <div className="wise-flow-node">
+                            <div className="wise-flow-bullet"></div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', flex: 1 }}>
+                              <span className="wise-flow-label">{t('conversionRate')}:</span>
+                              <span className="wise-flow-value">1 USDC = {selectedCountry.rate.toLocaleString()} {selectedCountry.currency}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Box 2: Recipient Gets */}
+                        <div className="wise-input-box" style={{ marginBottom: '20px', position: 'relative' }}>
+                          <label>{t('recipientGets')}</label>
+                          <div className="wise-input-row">
+                            <input 
+                              type="text" 
+                              className="wise-number-input"
+                              readOnly 
+                              value={selectedCountry.id === 'IN' || selectedCountry.id === 'PH' ? remitResultValue.toFixed(2) : Math.round(remitResultValue).toLocaleString()}
+                            />
+                            <div className="lang-selector-wrapper" ref={wiseDropdownRef} style={{ margin: 0 }}>
+                              <button
+                                type="button"
+                                className="wise-currency-trigger"
+                                onClick={() => setWiseDropdownOpen(prev => !prev)}
+                                aria-label="Select currency"
+                              >
+                                <span style={{ fontSize: '18px', lineHeight: 1 }}>{selectedCountry.flag}</span>
+                                <span>{selectedCountry.currency}</span>
+                                <ChevronDown className={`size-3.5 lang-chevron ${wiseDropdownOpen ? 'open' : ''}`} />
+                              </button>
+                              {wiseDropdownOpen && (
+                                <div className="wise-select-dropdown">
+                                  {COUNTRIES.map(c => (
+                                    <button
+                                      key={c.id}
+                                      type="button"
+                                      className={`wise-select-option ${targetCountryId === c.id ? 'selected' : ''}`}
+                                      onClick={() => {
+                                        setTargetCountryId(c.id);
+                                        setWiseDropdownOpen(false);
+                                      }}
+                                    >
+                                      <span style={{ fontSize: '18px' }}>{c.flag}</span>
+                                      <span>{c.name} ({c.currency})</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      <div className="form-group" style={{ marginBottom: '16px' }}>
+                        <label className="form-label" htmlFor="calc-recipient-address">{t('recipientAddress')}</label>
+                        <div className="input-container" style={{ margin: 0 }}>
+                          <div className="input-icon-left">
+                            <Wallet className="size-4" />
+                          </div>
+                          <input 
+                            type="text" 
+                            id="calc-recipient-address"
+                            className="input-field" 
+                            placeholder={t('recipientPlaceholder')} 
+                            value={remitRecipient}
+                            onChange={(e) => setRemitRecipient(e.target.value)}
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <button 
+                        type="submit" 
+                        className="stripe-btn-primary" 
+                        style={{ 
+                          background: 'linear-gradient(135deg, #00e6c3 0%, #00b09b 100%)', 
+                          color: '#000', 
+                          fontWeight: 'bold' 
+                        }}
+                      >
+                        {t('remitFunds')} {selectedCountry.name}
+                      </button>
+                    </form>
+                  </div>
+
                   {/* Dev Faucet Card */}
                   <div className="stripe-card">
                     <h2>
@@ -1204,6 +1456,31 @@ function App() {
                 {/* Right Column: Visual routes and settings info */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   
+                  {/* Globe Centerpiece Card */}
+                  <div className="stripe-card" style={{ position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                      <h2>
+                        <Globe className="text-secondary size-5" style={{ color: 'hsl(var(--secondary))' }} />
+                        Arc Global Network
+                      </h2>
+                      <span style={{ fontSize: '11px', color: 'hsl(var(--text-muted))', fontWeight: 'bold' }}>Live Status</span>
+                    </div>
+                    <div className="globe-card-body">
+                      {/* Background map/grid image */}
+                      <img 
+                        src="/particle_globe.png" 
+                        alt="Global Network" 
+                        className="particle-globe-img" 
+                        style={{ position: 'absolute', opacity: 0.12, pointerEvents: 'none' }} 
+                      />
+                      
+                      {/* Spinning 3D globe effect */}
+                      <div className="spinning-globe-container" style={{ width: '180px', height: '180px', position: 'relative', zIndex: 2 }}>
+                        <div className="spinning-globe"></div>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Account Information Card */}
                   <div className="stripe-card">
                     <h2>
@@ -1259,12 +1536,25 @@ function App() {
 
                   {/* FX Trends Widget */}
                   <div className="stripe-card">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
                       <h2>
                         <TrendingUp className="text-emerald-400 size-5" />
                         FX Trends (USDC)
                       </h2>
-                      <span style={{ fontSize: '11px', color: 'hsl(var(--text-muted))', fontWeight: 'bold' }}>VND 7-day</span>
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        {COUNTRIES.map(c => (
+                          <button
+                            key={c.id}
+                            type="button"
+                            className={`stripe-btn-secondary ${activeChartTab === c.currency ? 'active' : ''}`}
+                            onClick={() => setActiveChartTab(c.currency)}
+                            style={{ padding: '4px 8px', fontSize: '10.5px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                          >
+                            <span>{c.flag}</span>
+                            {c.currency}
+                          </button>
+                        ))}
+                      </div>
                     </div>
 
                     <div className="chart-card-body">
@@ -1273,15 +1563,15 @@ function App() {
                         <line x1="40" y1="80" x2="380" y2="80" className="chart-grid-line" style={{ stroke: 'rgba(255,255,255,0.04)' }} />
                         <line x1="40" y1="140" x2="380" y2="140" className="chart-grid-line" style={{ stroke: 'rgba(255,255,255,0.04)' }} />
 
-                        {/* Sparkline chart */}
+                        {/* Sparkline chart path rendering */}
                         <path 
-                          d="M 40,140 L 96,120 L 152,100 L 208,110 L 264,70 L 320,85 L 376,60" 
+                          d={renderChartPath()} 
                           fill="none" 
                           stroke="hsl(var(--secondary))" 
                           strokeWidth="2.5" 
                         />
                         {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'].map((day, index) => {
-                          const x = (index / 6) * 336 + 40;
+                          const x = (index / 6) * 340 + 40;
                           return (
                             <text key={day} x={x} y="156" textAnchor="middle" fill="rgba(255,255,255,0.4)" style={{ fontSize: '9px' }}>
                               {day}
