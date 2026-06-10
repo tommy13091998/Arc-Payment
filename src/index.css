@@ -858,7 +858,7 @@ body {
   height: 100%;
   border-radius: 50%;
   background-image: url('/earth_flat_map.png');
-  background-size: 200% 100%;
+  background-size: 200% 200%;
   background-repeat: repeat-x;
   animation: spinEarth 20s linear infinite;
   opacity: 0.95;
