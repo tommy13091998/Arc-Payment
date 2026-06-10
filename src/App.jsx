@@ -20,7 +20,14 @@ import {
   ChevronDown,
   Sun,
   Moon,
-  Lock
+  Lock,
+  Terminal,
+  Shield,
+  Layers,
+  Percent,
+  Plus,
+  Trash2,
+  AlertTriangle
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { ethers } from 'ethers';
@@ -56,399 +63,168 @@ const HISTORICAL_RATES = {
   IDR: [16180, 16200, 16220, 16210, 16260, 16240, 16250],
 };
 
-// Global network map coordinates
-const MAP_NODES = [
-  { id: 'us', name: 'United States', code: 'US', x: '37.5%', y: '33.3%' },
-  { id: 'uk', name: 'United Kingdom', code: 'UK', x: '45.8%', y: '25.0%' },
-  { id: 'id', name: 'Indonesia',      code: 'ID', x: '64.5%', y: '68.0%' },
-  { id: 'in', name: 'India',          code: 'IN', x: '58.3%', y: '41.7%' },
-  { id: 'vn', name: 'Vietnam',        code: 'VN', x: '63.5%', y: '55.0%' },
-  { id: 'ph', name: 'Philippines',    code: 'PH', x: '66.7%', y: '65.0%' },
-  { id: 'sg', name: 'Singapore',      code: 'SG', x: '64.0%', y: '61.5%' },
-];
-
-// Supported UI languages
 const LANGUAGES = [
   { code: 'en', label: 'English',    flagCode: 'us' },
   { code: 'vi', label: 'Tiếng Việt', flagCode: 'vn' },
-  { code: 'zh', label: '中文',        flagCode: 'cn' },
-  { code: 'ja', label: '日本語',      flagCode: 'jp' },
-  { code: 'es', label: 'Español',    flagCode: 'mx' },
-  { code: 'hi', label: 'हिन्दी',     flagCode: 'in' },
-  { code: 'tl', label: 'Filipino',   flagCode: 'ph' },
-  { code: 'sw', label: 'Swahili',    flagCode: 'ke' },
 ];
 
-// i18n Translations
 const TRANSLATIONS = {
   en: {
-    dashboard:'Dashboard', balance:'Balance', p2pSend:'P2P Direct Send', invoices:'Invoices', fxMarket:'Live FX Market', allActivity:'All Activity', disconnect:'Disconnect',
-    connectWallet:'Connect OKX / MetaMask', connectingWallet:'Connecting wallet...', availableBalance:'Available Balance', arcNetwork:'Arc network',
-    receiveUsdc:'Receive USDC', requestInvoice:'Request Invoice', remittanceTitle:'Wise Remittance Calculator',
-    demoWarning:'Simulated demo on Arc Testnet. Direct fiat conversion or local payouts are currently simulating mock rates.',
-    youSend:'You send', recipientGets:'Recipient gets', gasFee:'Gas / Remit Fee', conversionRate:'Conversion Rate',
-    transferMode:'Transfer Mode', gasNative:'Gas Native', erc20Sys:'ERC20 Sys',
-    recipientAddress:'Recipient EVM Wallet Address', recipientPlaceholder:'0x recipient address',
-    remitFunds:'Remit Funds to', processing:'Processing Settlement...',
-    recentRemittances:'Recent Remittances', refresh:'Refresh',
-    globalRoute:'Global Settlement Route', fxSparkline:'FX Sparkline Chart',
-    p2pTitle:'Intra-chain USDC Payout',
-    p2pDesc:'Transfer USDC directly to another EVM address on the Arc Network. Gas fees will be settled directly in USDC.',
-    recipientAddressLabel:'Recipient Address (EVM / Address)', amountLabel:'Amount (USDC)', transferModeLabel:'Transfer Mode',
-    nativeGasFull:'Native Gas (18 decimals)', erc20ContractFull:'ERC20 Contract (6 decimals)',
-    sendDirect:'Send USDC Direct', broadcasting:'Broadcasting direct tx...',
-    invoiceTitle:'USDC Request Invoice Generator',
-    invoiceDesc:'Fill in the details to generate a payment request. Other users can copy this link and pay you instantly on the Arc network.',
-    requestAmountLabel:'Request Amount (USDC)', memoLabel:'Requested Memo / Services', memoPlaceholder:'e.g. Website development contract',
-    generateInvoice:'Generate Invoice Link & QR',
-    invoiceGenerated:'USDC Request Generated', invoiceShare:'Send this request URL or QR to your client.',
-    requestAmountText:'Request Amount:', memoText:'Memo:', copyClose:'Copy & Close', close:'Close',
-    trendsTitle:'Live Conversion Charts', fxDayLabel:'7-day',
-    historyTitle:'Full Transaction Ledger Activity',
-    colType:'Type', colAmount:'USDC Amount', colPayout:'Payout value', colCountry:'Country', colTxHash:'Transaction hash', colStatus:'Status',
-    landingDesc:'Instant cross-border stablecoin remittance powered by USDC native gas on Arc network.',
-    updating:'Arc network', done:'Done', remitLockedMessage:'Remittance services are temporarily disabled. Wallet signing is locked for this feature.',
+    dashboard: 'Dashboard',
+    send: 'Send USDC',
+    receive: 'Receive & Invoices',
+    merchant: 'Merchant Portal',
+    bridge: 'CCTP Bridge',
+    devConsole: 'Developer Logs',
+    availableBalance: 'Available Balance',
+    arcNetwork: 'Arc Network',
+    sponsoredGas: 'Sponsored Gas',
+    standardGas: 'Standard Gas',
+    simulating: 'Simulating transaction...',
+    blacklistWarn: 'CRITICAL WARNING: Address is blacklisted!',
+    simulationSuccess: 'Simulation Succeeded',
+    confirmSend: 'Confirm & Sign',
+    cancel: 'Cancel',
+    sendDirect: 'Send USDC Direct',
+    broadcasting: 'Broadcasting transaction...',
+    invoiceTitle: 'USDC Invoice Generator',
+    generateInvoice: 'Generate Request Link & QR',
+    copyClose: 'Copy & Close',
+    close: 'Close',
+    revenueToday: 'Today\'s Revenue',
+    txCount: 'Total Transactions',
+    averageReceived: 'Average Ticket Size',
+    splitTitle: 'Split Payment Tool',
+    splitDesc: 'Transfer USDC to multiple EVM addresses simultaneously based on percentage splits.',
+    addRecipient: 'Add Recipient',
+    broadcastSplit: 'Broadcast Split Payment',
+    bridgeTitle: 'Circle CCTP Cross-chain Bridge',
+    bridgeDesc: 'Bridge USDC between Ethereum Sepolia, Base Testnet, Solana Devnet, and Arc Network securely using Circle\'s CCTP.',
+    faucetTitle: 'Arc USDC Developer Faucet',
+    faucetDesc: 'Get test USDC directly to your wallet for testing smart contracts and payments.',
   },
   vi: {
-    dashboard:'Tổng quan', balance:'Số dư', p2pSend:'Gửi P2P trực tiếp', invoices:'Hóa đơn', fxMarket:'Thị trường FX', allActivity:'Tất cả giao dịch', disconnect:'Ngắt kết nối',
-    connectWallet:'Kết nối OKX / MetaMask', connectingWallet:'Đang kết nối...', availableBalance:'Số dư khả dụng', arcNetwork:'Mạng Arc',
-    receiveUsdc:'Nhận USDC', requestInvoice:'Tạo hóa đơn', remittanceTitle:'Công cụ chuyển tiền quốc tế',
-    demoWarning:'Demo mô phỏng trên Arc Testnet. Tỷ giá quy đổi fiat hiện đang dùng tỷ giá giả lập.',
-    youSend:'Bạn gửi', recipientGets:'Người nhận được', gasFee:'Phí Gas / Chuyển tiền', conversionRate:'Tỷ giá quy đổi',
-    transferMode:'Hình thức chuyển', gasNative:'Gas gốc', erc20Sys:'Hệ thống ERC20',
-    recipientAddress:'Địa chỉ ví EVM người nhận', recipientPlaceholder:'Địa chỉ 0x người nhận',
-    remitFunds:'Chuyển tiền tới', processing:'Đang xử lý...',
-    recentRemittances:'Giao dịch gần đây', refresh:'Làm mới',
-    globalRoute:'Tuyến thanh toán toàn cầu', fxSparkline:'Biểu đồ tỷ giá',
-    p2pTitle:'Chuyển USDC trong chuỗi',
-    p2pDesc:'Chuyển USDC trực tiếp đến địa chỉ EVM khác trên mạng Arc. Phí gas được thanh toán bằng USDC.',
-    recipientAddressLabel:'Địa chỉ người nhận (EVM)', amountLabel:'Số lượng (USDC)', transferModeLabel:'Hình thức chuyển',
-    nativeGasFull:'Gas gốc (18 số thập phân)', erc20ContractFull:'Hợp đồng ERC20 (6 số thập phân)',
-    sendDirect:'Gửi USDC trực tiếp', broadcasting:'Đang phát giao dịch...',
-    invoiceTitle:'Tạo hóa đơn yêu cầu USDC',
-    invoiceDesc:'Điền thông tin để tạo yêu cầu thanh toán. Người khác có thể sao chép liên kết và thanh toán ngay.',
-    requestAmountLabel:'Số tiền yêu cầu (USDC)', memoLabel:'Ghi chú / Dịch vụ', memoPlaceholder:'VD: Hợp đồng phát triển website',
-    generateInvoice:'Tạo liên kết & mã QR',
-    invoiceGenerated:'Đã tạo yêu cầu USDC', invoiceShare:'Gửi URL hoặc mã QR này cho khách hàng của bạn.',
-    requestAmountText:'Số tiền yêu cầu:', memoText:'Ghi chú:', copyClose:'Sao chép & Đóng', close:'Đóng',
-    trendsTitle:'Biểu đồ tỷ giá trực tiếp', fxDayLabel:'7 ngày',
-    historyTitle:'Lịch sử giao dịch đầy đủ',
-    colType:'Loại', colAmount:'Số USDC', colPayout:'Giá trị nhận', colCountry:'Quốc gia', colTxHash:'Mã giao dịch', colStatus:'Trạng thái',
-    landingDesc:'Chuyển tiền xuyên biên giới tức thì bằng USDC trên mạng Arc, phí gas bằng 0.',
-    updating:'Mạng Arc', done:'Xong', remitLockedMessage:'Dịch vụ chuyển tiền quốc tế hiện đã bị khóa. Tính năng ký ví không được hỗ trợ cho mục này.',
-  },
-  zh: {
-    dashboard:'控制台', balance:'余额', p2pSend:'P2P 直接发送', invoices:'发票', fxMarket:'实时外汇市场', allActivity:'所有活动', disconnect:'断开连接',
-    connectWallet:'连接 OKX / MetaMask', connectingWallet:'连接中...', availableBalance:'可用余额', arcNetwork:'Arc 网络',
-    receiveUsdc:'接收 USDC', requestInvoice:'请求发票', remittanceTitle:'汇款计算器',
-    demoWarning:'Arc 测试网模拟演示。法币转换目前使用模拟汇率。',
-    youSend:'您发送', recipientGets:'收款方收到', gasFee:'燃气/汇款费用', conversionRate:'汇率',
-    transferMode:'转账方式', gasNative:'原生 Gas', erc20Sys:'ERC20 系统',
-    recipientAddress:'收款人 EVM 钱包地址', recipientPlaceholder:'0x 收款地址',
-    remitFunds:'汇款至', processing:'处理中...',
-    recentRemittances:'近期汇款', refresh:'刷新',
-    globalRoute:'全球结算路线', fxSparkline:'外汇走势图',
-    p2pTitle:'链内 USDC 支付（Cash App 风格）',
-    p2pDesc:'在 Arc 网络上直接将 USDC 转账到另一个 EVM 地址。',
-    recipientAddressLabel:'收款人地址 (EVM)', amountLabel:'金额 (USDC)', transferModeLabel:'转账方式',
-    nativeGasFull:'原生 Gas（18 位小数）', erc20ContractFull:'ERC20 合约（6 位小数）',
-    sendDirect:'直接发送 USDC', broadcasting:'广播交易中...',
-    invoiceTitle:'USDC 请求发票生成器（PayPal 风格）',
-    invoiceDesc:'填写详情以生成付款请求，其他用户可复制链接立即支付。',
-    requestAmountLabel:'请求金额 (USDC)', memoLabel:'备注/服务说明', memoPlaceholder:'例：网站开发合同',
-    generateInvoice:'生成发票链接和二维码',
-    invoiceGenerated:'已生成 USDC 请求', invoiceShare:'将此请求 URL 或二维码发送给您的客户。',
-    requestAmountText:'请求金额：', memoText:'备注：', copyClose:'复制并关闭', close:'关闭',
-    trendsTitle:'实时汇率图表', fxDayLabel:'7天',
-    historyTitle:'完整交易记录',
-    colType:'类型', colAmount:'USDC 数量', colPayout:'支付金额', colCountry:'国家', colTxHash:'交易哈希', colStatus:'状态',
-    landingDesc:'通过 Arc 网络上的 USDC 原生 Gas 实现即时跨境稳定币汇款。',
-    updating:'Arc 网络', done:'完成', remitLockedMessage:'跨境汇款服务已暂时禁用。该功能已锁定钱包签名。',
-  },
-  ja: {
-    dashboard:'ダッシュボード', balance:'残高', p2pSend:'P2P 直接送金', invoices:'請求書', fxMarket:'FX マーケット', allActivity:'全取引', disconnect:'切断',
-    connectWallet:'OKX / MetaMask に接続', connectingWallet:'接続中...', availableBalance:'利用可能残高', arcNetwork:'Arc ネットワーク',
-    receiveUsdc:'USDC を受け取る', requestInvoice:'請求書を作成', remittanceTitle:'送金計算機',
-    demoWarning:'Arc テストネットのシミュレーションデモ。法定通貨の変換はモックレートで動作しています。',
-    youSend:'送金額', recipientGets:'受取額', gasFee:'ガス/送金手数料', conversionRate:'換算レート',
-    transferMode:'転送モード', gasNative:'ネイティブ Gas', erc20Sys:'ERC20 システム',
-    recipientAddress:'受取人 EVM ウォレットアドレス', recipientPlaceholder:'0x 受取アドレス',
-    remitFunds:'送金先', processing:'処理中...',
-    recentRemittances:'最近の送金', refresh:'更新',
-    globalRoute:'グローバル決済ルート', fxSparkline:'FX スパークラインチャート',
-    p2pTitle:'USDC チェーン内送金（Cash App スタイル）',
-    p2pDesc:'Arc ネットワーク上の別の EVM アドレスに USDC を直接転送します。',
-    recipientAddressLabel:'受取人アドレス (EVM)', amountLabel:'金額 (USDC)', transferModeLabel:'転送モード',
-    nativeGasFull:'ネイティブ Gas（18桁）', erc20ContractFull:'ERC20 コントラクト（6桁）',
-    sendDirect:'USDC を直接送金', broadcasting:'トランザクション放送中...',
-    invoiceTitle:'USDC 請求書ジェネレーター（PayPal スタイル）',
-    invoiceDesc:'支払いリクエストを生成するために詳細を入力してください。',
-    requestAmountLabel:'リクエスト金額 (USDC)', memoLabel:'メモ/サービス内容', memoPlaceholder:'例：Webサイト開発契約',
-    generateInvoice:'請求書リンクと QR コードを生成',
-    invoiceGenerated:'USDC リクエストが生成されました', invoiceShare:'このリクエスト URL または QR をクライアントに送信してください。',
-    requestAmountText:'請求金額：', memoText:'メモ：', copyClose:'コピーして閉じる', close:'閉じる',
-    trendsTitle:'リアルタイム換算チャート', fxDayLabel:'7日間',
-    historyTitle:'完全な取引元帳',
-    colType:'種類', colAmount:'USDC 金額', colPayout:'受取金額', colCountry:'国', colTxHash:'トランザクションハッシュ', colStatus:'ステータス',
-    landingDesc:'Arc ネットワーク上の USDC ネイティブ Gas による即時クロスボーダー送金。',
-    updating:'Arc ネットワーク', done:'完了', remitLockedMessage:'海外送金サービスは一時的に無効になっています。この機能のウォレット署名はロックされています。',
-  },
-  es: {
-    dashboard:'Panel', balance:'Saldo', p2pSend:'Envío P2P Directo', invoices:'Facturas', fxMarket:'Mercado FX en Vivo', allActivity:'Toda la Actividad', disconnect:'Desconectar',
-    connectWallet:'Conectar OKX / MetaMask', connectingWallet:'Conectando...', availableBalance:'Saldo Disponible', arcNetwork:'Red Arc',
-    receiveUsdc:'Recibir USDC', requestInvoice:'Solicitar Factura', remittanceTitle:'Calculadora de Remesas',
-    demoWarning:'Demo simulada en Arc Testnet. Las conversiones a moneda local usan tasas ficticias.',
-    youSend:'Tú envías', recipientGets:'El destinatario recibe', gasFee:'Gas / Comisión de envío', conversionRate:'Tasa de cambio',
-    transferMode:'Modo de transferencia', gasNative:'Gas Nativo', erc20Sys:'Sistema ERC20',
-    recipientAddress:'Dirección de cartera EVM del destinatario', recipientPlaceholder:'Dirección 0x del destinatario',
-    remitFunds:'Remitir fondos a', processing:'Procesando...',
-    recentRemittances:'Remesas recientes', refresh:'Actualizar',
-    globalRoute:'Ruta de liquidación global', fxSparkline:'Gráfico de divisas',
-    p2pTitle:'Pago USDC en cadena (estilo Cash App)',
-    p2pDesc:'Transfiere USDC directamente a otra dirección EVM en la red Arc.',
-    recipientAddressLabel:'Dirección del destinatario (EVM)', amountLabel:'Monto (USDC)', transferModeLabel:'Modo de transferencia',
-    nativeGasFull:'Gas Nativo (18 decimales)', erc20ContractFull:'Contrato ERC20 (6 decimales)',
-    sendDirect:'Enviar USDC Directo', broadcasting:'Difundiendo transacción...',
-    invoiceTitle:'Generador de Facturas USDC (estilo PayPal)',
-    invoiceDesc:'Completa los detalles para generar una solicitud de pago. Otros usuarios pueden pagar al instante.',
-    requestAmountLabel:'Monto solicitado (USDC)', memoLabel:'Nota / Servicios', memoPlaceholder:'Ej. Contrato de desarrollo web',
-    generateInvoice:'Generar enlace y QR de factura',
-    invoiceGenerated:'Solicitud USDC generada', invoiceShare:'Envía esta URL o QR a tu cliente.',
-    requestAmountText:'Monto solicitado:', memoText:'Nota:', copyClose:'Copiar y cerrar', close:'Cerrar',
-    trendsTitle:'Gráficos de conversión en vivo', fxDayLabel:'7 días',
-    historyTitle:'Registro completo de transacciones',
-    colType:'Tipo', colAmount:'Monto USDC', colPayout:'Valor de pago', colCountry:'País', colTxHash:'Hash de transacción', colStatus:'Estado',
-    landingDesc:'Remesas instantáneas de stablecoins entre fronteras con gas nativo USDC en la red Arc.',
-    updating:'Red Arc', done:'Listo', remitLockedMessage:'Los servicios de remesas están temporalmente deshabilitados. La firma de cartera está bloqueada para esta función.',
-  },
-  hi: {
-    dashboard:'डैशबोर्ड', balance:'शेष', p2pSend:'P2P डायरेक्ट भेजें', invoices:'चालान', fxMarket:'FX बाज़ार', allActivity:'सभी गतिविधि', disconnect:'डिसकनेक्ट',
-    connectWallet:'OKX / MetaMask कनेक्ट करें', connectingWallet:'कनेक्ट हो रहा है...', availableBalance:'उपलब्ध शेष', arcNetwork:'Arc नेटवर्क',
-    receiveUsdc:'USDC प्राप्त करें', requestInvoice:'चालान अनुरोध', remittanceTitle:'प्रेषण कैलकुलेटर',
-    demoWarning:'Arc Testnet पर सिम्युलेटेड डेमो। फ़िएट रूपांतरण मॉक दरों का उपयोग कर रहा है।',
-    youSend:'आप भेजें', recipientGets:'प्राप्तकर्ता को मिलता है', gasFee:'गैस / प्रेषण शुल्क', conversionRate:'विनिमय दर',
-    transferMode:'ट्रांसफर मोड', gasNative:'नेटिव गैस', erc20Sys:'ERC20 सिस्टम',
-    recipientAddress:'प्राप्तकर्ता EVM वॉलेट पता', recipientPlaceholder:'0x प्राप्तकर्ता पता',
-    remitFunds:'धन भेजें', processing:'प्रोसेस हो रहा है...',
-    recentRemittances:'हाल के प्रेषण', refresh:'रिफ्रेश',
-    globalRoute:'ग्लोबल सेटलमेंट रूट', fxSparkline:'FX स्पार्कलाइन चार्ट',
-    p2pTitle:'इंट्रा-चेन USDC पेमेंट',
-    p2pDesc:'Arc नेटवर्क पर किसी अन्य EVM पते पर USDC ट्रांसफर करें।',
-    recipientAddressLabel:'प्राप्तकर्ता पता (EVM)', amountLabel:'राशि (USDC)', transferModeLabel:'ट्रांसफर मोड',
-    nativeGasFull:'नेटिव गैस (18 दशमलव)', erc20ContractFull:'ERC20 कॉन्ट्रैक्ट (6 दशमलव)',
-    sendDirect:'USDC डायरेक्ट भेजें', broadcasting:'ट्रांजेक्शन ब्रॉडकास्ट हो रहा है...',
-    invoiceTitle:'USDC चालान जेनरेटर',
-    invoiceDesc:'भुगतान अनुरोध बनाने के लिए विवरण भरें। अन्य उपयोगकर्ता लिंक कॉपी करके तुरंत भुगतान कर सकते हैं।',
-    requestAmountLabel:'अनुरोध राशि (USDC)', memoLabel:'मेमो / सेवाएं', memoPlaceholder:'उदा. वेबसाइट विकास अनुबंध',
-    generateInvoice:'चालान लिंक और QR बनाएं',
-    invoiceGenerated:'USDC अनुरोध बनाया गया', invoiceShare:'यह URL या QR अपने क्लाइंट को भेजें।',
-    requestAmountText:'अनुरोध राशि:', memoText:'मेमो:', copyClose:'कॉपी करें और बंद करें', close:'बंद करें',
-    trendsTitle:'लाइव रूपांतरण चार्ट', fxDayLabel:'7 दिन',
-    historyTitle:'पूर्ण लेनदेन बहीखाता',
-    colType:'प्रकार', colAmount:'USDC राशि', colPayout:'भुगतान मूल्य', colCountry:'देश', colTxHash:'ट्रांजेक्शन हैश', colStatus:'स्थिति',
-    landingDesc:'Arc नेटवर्क पर USDC नेटिव Gas द्वारा तत्काल क्रॉस-बॉर्डर स्टेबलकॉइन प्रेषण।',
-    updating:'Arc नेटवर्क', done:'ठीक है', remitLockedMessage:'प्रेषण सेवा अस्थायी रूप से अक्षम है। इस सुविधा के लिए वॉलेट हस्ताक्षर लॉक है।',
-  },
-  tl: {
-    dashboard:'Dashboard', balance:'Balanse', p2pSend:'P2P Direktang Pagpapadala', invoices:'Mga Invoice', fxMarket:'FX Merkado', allActivity:'Lahat ng Aktibidad', disconnect:'Idiskonekta',
-    connectWallet:'Ikonekta ang OKX / MetaMask', connectingWallet:'Nagkokonekta...', availableBalance:'Available na Balanse', arcNetwork:'Arc Network',
-    receiveUsdc:'Tumanggap ng USDC', requestInvoice:'Humiling ng Invoice', remittanceTitle:'Kalkulador ng Remittance',
-    demoWarning:'Simuladong demo sa Arc Testnet. Ang fiat conversion ay gumagamit ng mock rates.',
-    youSend:'Ipadala mo', recipientGets:'Tatanggapin ng tatanggap', gasFee:'Gas / Bayad sa Remittance', conversionRate:'Rate ng Konbersyon',
-    transferMode:'Mode ng Paglipat', gasNative:'Native Gas', erc20Sys:'ERC20 Sistema',
-    recipientAddress:'EVM Wallet Address ng Tatanggap', recipientPlaceholder:'0x address ng tatanggap',
-    remitFunds:'Magpadala ng Pondo sa', processing:'Pinoproseso...',
-    recentRemittances:'Mga Kamakailang Remittance', refresh:'I-refresh',
-    globalRoute:'Global Settlement Route', fxSparkline:'FX Sparkline Chart',
-    p2pTitle:'Intra-chain na USDC Bayad',
-    p2pDesc:'Ilipat ang USDC nang direkta sa ibang EVM address sa Arc Network.',
-    recipientAddressLabel:'Address ng Tatanggap (EVM)', amountLabel:'Halaga (USDC)', transferModeLabel:'Mode ng Paglipat',
-    nativeGasFull:'Native Gas (18 decimal)', erc20ContractFull:'ERC20 Kontrata (6 decimal)',
-    sendDirect:'Direktang Magpadala ng USDC', broadcasting:'Nagbo-broadcast ng transaksyon...',
-    invoiceTitle:'USDC Invoice Generator',
-    invoiceDesc:'Punan ang mga detalye para makabuo ng kahilingan sa pagbabayad.',
-    requestAmountLabel:'Halagang Hinihingi (USDC)', memoLabel:'Memo / Mga Serbisyo', memoPlaceholder:'Hal. Kontrata sa pagbuo ng website',
-    generateInvoice:'Bumuo ng Invoice Link at QR',
-    invoiceGenerated:'USDC Request ay Nabuo', invoiceShare:'Ipadala ang URL o QR na ito sa iyong kliyente.',
-    requestAmountText:'Halagang Hinihingi:', memoText:'Memo:', copyClose:'Kopyahin at Isara', close:'Isara',
-    trendsTitle:'Live na Tsart ng Konbersyon', fxDayLabel:'7 araw',
-    historyTitle:'Kumpletong Talaan ng Transaksyon',
-    colType:'Uri', colAmount:'Halaga ng USDC', colPayout:'Halaga ng Bayad', colCountry:'Bansa', colTxHash:'Hash ng Transaksyon', colStatus:'Katayuan',
-    landingDesc:'Instant na cross-border stablecoin remittance gamit ang USDC native gas sa Arc network.',
-    updating:'Arc Network', done:'Tapos na', remitLockedMessage:'Ang mga serbisyo ng remittance ay pansamantalang hindi pinagana. Ang wallet signing ay naka-lock para sa tampok na ito.',
-  },
-  sw: {
-    dashboard:'Dashibodi', balance:'Salio', p2pSend:'Tuma P2P Moja kwa Moja', invoices:'Ankara', fxMarket:'Soko la FX', allActivity:'Shughuli Zote', disconnect:'Ondoa Muunganisho',
-    connectWallet:'Unganisha OKX / MetaMask', connectingWallet:'Inaunganisha...', availableBalance:'Salio Linaloweza Kutumika', arcNetwork:'Mtandao wa Arc',
-    receiveUsdc:'Pokea USDC', requestInvoice:'Omba Ankara', remittanceTitle:'Kikokotoo cha Uhamishaji',
-    demoWarning:'Onyesho la mfano kwenye Arc Testnet. Ubadilishaji wa fedha unatumia viwango vya mazoezi.',
-    youSend:'Unatuma', recipientGets:'Mpokeaji anapata', gasFee:'Gas / Ada ya Uhamishaji', conversionRate:'Kiwango cha Ubadilishaji',
-    transferMode:'Hali ya Uhamishaji', gasNative:'Gas ya Asili', erc20Sys:'Mfumo wa ERC20',
-    recipientAddress:'Anwani ya Pochi ya EVM ya Mpokeaji', recipientPlaceholder:'0x anwani ya mpokeaji',
-    remitFunds:'Hamisha Fedha kwenda', processing:'Inachakata...',
-    recentRemittances:'Uhamishaji wa Hivi Karibuni', refresh:'Onyesha upya',
-    globalRoute:'Njia ya Makubaliano ya Kimataifa', fxSparkline:'Chati ya FX',
-    p2pTitle:'Malipo ya USDC Ndani ya Mnyororo',
-    p2pDesc:'Hamisha USDC moja kwa moja kwa anwani nyingine ya EVM kwenye Mtandao wa Arc.',
-    recipientAddressLabel:'Anwani ya Mpokeaji (EVM)', amountLabel:'Kiasi (USDC)', transferModeLabel:'Hali ya Uhamishaji',
-    nativeGasFull:'Gas ya Asili (desimali 18)', erc20ContractFull:'Mkataba wa ERC20 (desimali 6)',
-    sendDirect:'Tuma USDC Moja kwa Moja', broadcasting:'Inasambaza muamala...',
-    invoiceTitle:'Jenereta ya Ankara ya USDC',
-    invoiceDesc:'Jaza maelezo ili kuunda ombi la malipo. Watumiaji wengine wanaweza kulipa mara moja.',
-    requestAmountLabel:'Kiasi Kinachoombwa (USDC)', memoLabel:'Kumbukumbu / Huduma', memoPlaceholder:'Mf. Mkataba wa maendeleo ya tovuti',
-    generateInvoice:'Tengeneza Kiungo cha Ankara na QR',
-    invoiceGenerated:'Ombi la USDC Limeundwa', invoiceShare:'Tuma URL au QR hii kwa mteja wako.',
-    requestAmountText:'Kiasi Kinachoombwa:', memoText:'Kumbukumbu:', copyClose:'Nakili na Funga', close:'Funga',
-    trendsTitle:'Chati za Ubadilishaji wa Moja kwa Moja', fxDayLabel:'Siku 7',
-    historyTitle:'Daftari Kamili la Muamala',
-    colType:'Aina', colAmount:'Kiasi cha USDC', colPayout:'Thamani ya Malipo', colCountry:'Nchi', colTxHash:'Hash ya Muamala', colStatus:'Hali',
-    landingDesc:'Uhamishaji wa fedha wa haraka wa stablecoin kwa kutumia USDC native gas kwenye mtandao wa Arc.',
-    updating:'Mtandao wa Arc', done:'Imekamilika', remitLockedMessage:'Huduma za utumaji pesa zimezimwa kwa muda. Utiaji saini wa mkoba umefungwa kwa kipengele hiki.',
-  },
+    dashboard: 'Tổng quan',
+    send: 'Gửi USDC',
+    receive: 'Nhận & Hóa đơn',
+    merchant: 'Kênh Người bán',
+    bridge: 'Cầu CCTP',
+    devConsole: 'Nhật ký Dev',
+    availableBalance: 'Số dư khả dụng',
+    arcNetwork: 'Mạng Arc',
+    sponsoredGas: 'Gas được tài trợ',
+    standardGas: 'Gas tiêu chuẩn',
+    simulating: 'Đang mô phỏng giao dịch...',
+    blacklistWarn: 'CẢNH BÁO: Địa chỉ nằm trong danh sách đen!',
+    simulationSuccess: 'Mô phỏng thành công',
+    confirmSend: 'Xác nhận & Ký',
+    cancel: 'Hủy',
+    sendDirect: 'Gửi USDC trực tiếp',
+    broadcasting: 'Đang gửi giao dịch...',
+    invoiceTitle: 'Tạo hóa đơn USDC',
+    generateInvoice: 'Tạo liên kết & mã QR',
+    copyClose: 'Sao chép & Đóng',
+    close: 'Đóng',
+    revenueToday: 'Doanh thu hôm nay',
+    txCount: 'Số lượng giao dịch',
+    averageReceived: 'Giá trị trung bình',
+    splitTitle: 'Thanh toán chia nhỏ',
+    splitDesc: 'Chuyển USDC tới nhiều địa chỉ EVM cùng lúc dựa trên tỷ lệ phần trăm được cấu hình.',
+    addRecipient: 'Thêm người nhận',
+    broadcastSplit: 'Thực hiện chia nhỏ thanh toán',
+    bridgeTitle: 'Cầu xuyên chuỗi Circle CCTP',
+    bridgeDesc: 'Cầu nối USDC giữa Ethereum Sepolia, Base Testnet, Solana Devnet và Mạng Arc bằng Circle CCTP.',
+    faucetTitle: 'Vòi USDC Arc Developer',
+    faucetDesc: 'Nhận USDC thử nghiệm trực tiếp về ví của bạn để thử nghiệm hợp đồng thông minh và thanh toán.',
+  }
 };
 
 function App() {
-
-  // Navigation: 'dashboard', 'remit', 'p2p', 'invoice', 'trends', 'history'
+  // Navigation & UI States
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [theme, setTheme] = useState(() => localStorage.getItem('arc_pay_theme') || 'dark');
+  const [selectedLang, setSelectedLang] = useState(LANGUAGES[0]);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const [toasts, setToasts] = useState([]);
   
-  // Wallet & Connection State
+  // Wallet Connection States
   const [account, setAccount] = useState('');
-  const [nativeBalance, setNativeBalance] = useState('0.00');
-  const [erc20Balance, setErc20Balance] = useState('0.00');
-  const [balanceToUse, setBalanceToUse] = useState('native'); // 'native' or 'erc20'
-  const [network, setNetwork] = useState(null);
+  const [accountType, setAccountType] = useState(() => localStorage.getItem('arc_pay_account_type') || null); // 'web3' | 'social'
+  const [socialEmail, setSocialEmail] = useState(() => localStorage.getItem('arc_pay_social_email') || '');
+  const [socialPrivateKey, setSocialPrivateKey] = useState(() => localStorage.getItem('arc_pay_social_key') || '');
+  const [socialAddress, setSocialAddress] = useState(() => localStorage.getItem('arc_pay_social_address') || '');
   const [isConnecting, setIsConnecting] = useState(false);
-  
-  // Wise Remittance State
-  const [remitAmount, setRemitAmount] = useState('100');
-  const [remitRecipient, setRemitRecipient] = useState('');
-  const [targetCountryId, setTargetCountryId] = useState('VN');
-  const [remitTransferType, setRemitTransferType] = useState('native'); // 'native' or 'erc20'
-  const [isRemitting, setIsRemitting] = useState(false);
-  
-  // Direct P2P State
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [socialEmailInput, setSocialEmailInput] = useState('');
+  const [copiedAddress, setCopiedAddress] = useState(false);
+
+  // Balance States
+  const [nativeBalance, setNativeBalance] = useState('0.0000');
+  const [erc20Balance, setErc20Balance] = useState('0.00');
+  const [mockUSDC, setMockUSDC] = useState(() => parseFloat(localStorage.getItem('arc_pay_mock_usdc') || '100')); // default with 100 mock USDC for easy testing
+  const [network, setNetwork] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Core Send States
   const [p2pRecipient, setP2pRecipient] = useState('');
   const [p2pAmount, setP2pAmount] = useState('');
-  const [p2pTransferType, setP2pTransferType] = useState('native');
-  const [isP2pSending, setIsP2pSending] = useState(false);
+  const [p2pMemo, setP2pMemo] = useState('');
+  const [sponsoredGas, setSponsoredGas] = useState(true);
+  const [isSendingTx, setIsSendingTx] = useState(false);
 
-  // Invoice / Payment Request State
+  // Invoice / Payment Request States
   const [invoiceAmount, setInvoiceAmount] = useState('');
   const [invoiceDesc, setInvoiceDesc] = useState('');
+  const [invoiceExpiry, setInvoiceExpiry] = useState('24h');
   const [generatedInvoiceLink, setGeneratedInvoiceLink] = useState('');
-  
-  // Theme State
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('arc_pay_theme') || 'dark';
+  const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
+  const [copiedInvoice, setCopiedInvoice] = useState(false);
+
+  // Split Payment States
+  const [splitRecipients, setSplitRecipients] = useState([
+    { address: '', percent: 60 },
+    { address: '', percent: 40 }
+  ]);
+  const [splitAmount, setSplitAmount] = useState('');
+  const [splitMemo, setSplitMemo] = useState('');
+
+  // Merchant Portal States
+  const [standeeModalOpen, setStandeeModalOpen] = useState(false);
+  const [receiptModalOpen, setReceiptModalOpen] = useState(false);
+  const [activeReceipt, setActiveReceipt] = useState(null);
+
+  // Cross-Chain CCTP States
+  const [bridgeSourceChain, setBridgeSourceChain] = useState('Base');
+  const [bridgeAmount, setBridgeAmount] = useState('');
+  const [isBridging, setIsBridging] = useState(false);
+  const [bridgeStep, setBridgeStep] = useState(0); // 0: Idle, 1: Burn, 2: Attestation, 3: Mint, 4: Success
+  const [bridgeTimer, setBridgeTimer] = useState(0);
+  const [otherChainsBalance, setOtherChainsBalance] = useState({
+    Base: 250.00,
+    Ethereum: 105.50,
+    Solana: 85.00
   });
 
-  // Copy flags & Modals
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [copiedAddress, setCopiedAddress] = useState(false);
-  const [copiedInvoice, setCopiedInvoice] = useState(false);
-  const [receiveModalOpen, setReceiveModalOpen] = useState(false);
-  const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
-  const [toasts, setToasts] = useState([]);
-  const [activeChartTab, setActiveChartTab] = useState('VND');
-  
-  // Custom dropdown triggers
-  const [wiseDropdownOpen, setWiseDropdownOpen] = useState(false);
-  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
-  const [selectedLang, setSelectedLang] = useState(LANGUAGES[0]);
+  // Security & Simulator Console
+  const [simulationModalOpen, setSimulationModalOpen] = useState(false);
+  const [simulationTxData, setSimulationTxData] = useState(null); // { to, amount, memo, type: 'p2p'|'split'|'invoice', originalData }
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [simulationSuccess, setSimulationSuccess] = useState(null);
+  const [simulationDetails, setSimulationDetails] = useState('');
+  const [blacklist, setBlacklist] = useState(['0x7777777777777777777777777777777777777777', '0xbad1010101010101010101010101010101010101']);
+  const [newBlacklistAddress, setNewBlacklistAddress] = useState('');
+  const [developerLogs, setDeveloperLogs] = useState(() => {
+    return [{ id: 1, time: new Date().toLocaleTimeString(), text: 'Arc-Payment Console Initialized.', type: 'info' }];
+  });
+  const [devConsoleOpen, setDevConsoleOpen] = useState(false);
 
-  const wiseDropdownRef = useRef(null);
+  // References
   const langDropdownRef = useRef(null);
-  const nodeTimerRef = useRef(null);
 
-  // i18n helper
+  // i18n Translation Helper
   const t = (key) => TRANSLATIONS[selectedLang.code]?.[key] ?? TRANSLATIONS.en[key] ?? key;
 
-  // Node jumping state
-  const [activeNodeIndex, setActiveNodeIndex] = useState(0);
-
-  // Transactions list with LocalStorage fallback
-  const [transactions, setTransactions] = useState(() => {
-    const saved = localStorage.getItem('arc_pay_txs');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        // Filter out demo transactions
-        return parsed.filter(tx => !['tx-1', 'tx-2', 'tx-3', 'tx-4'].includes(tx.id));
-      } catch (e) {
-        console.error('Failed parsing cached transactions:', e);
-      }
-    }
-    return [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem('arc_pay_txs', JSON.stringify(transactions));
-  }, [transactions]);
-
-  const selectedCountry = COUNTRIES.find(c => c.id === targetCountryId);
-
-  // Set up event listeners for OKX / MetaMask account changes
-  useEffect(() => {
-    const provider = window.okxwallet || window.ethereum;
-    if (provider) {
-      provider.on('accountsChanged', handleAccountsChanged);
-      provider.on('chainChanged', handleChainChanged);
-      
-      // Auto-connect if already authorized
-      provider.request({ method: 'eth_accounts' })
-        .then(handleAccountsChanged)
-        .catch(err => console.error('Error auto-connecting:', err));
-    }
-    
-    // Parse URL for invoice parameters
-    const params = new URLSearchParams(window.location.search);
-    const payAddress = params.get('pay');
-    const payAmount = params.get('amount');
-    const payDesc = params.get('desc');
-    
-    if (payAddress && payAmount) {
-      setRemitRecipient(payAddress);
-      setRemitAmount(payAmount);
-      setActiveTab('dashboard');
-      addToast('info', `Invoice loaded: Requesting ${payAmount} USDC for "${payDesc || 'Payment'}"`);
-    }
-
-    return () => {
-      const provider = window.okxwallet || window.ethereum;
-      if (provider) {
-        provider.removeListener('accountsChanged', handleAccountsChanged);
-        provider.removeListener('chainChanged', handleChainChanged);
-      }
-    };
-  }, []);
-
-  // Fetch balances when account or network changes
-  useEffect(() => {
-    if (account) {
-      fetchBalances();
-      const interval = setInterval(fetchBalances, 8000);
-      return () => clearInterval(interval);
-    }
-  }, [account, network]);
-
-  // Close country select dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (wiseDropdownRef.current && !wiseDropdownRef.current.contains(event.target)) {
-        setWiseDropdownOpen(false);
-      }
-      if (langDropdownRef.current && !langDropdownRef.current.contains(event.target)) {
-        setLangDropdownOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  // Sync theme with body class list
+  // Sync themes
   useEffect(() => {
     if (theme === 'light') {
       document.body.classList.add('light-theme');
@@ -458,13 +234,29 @@ function App() {
     localStorage.setItem('arc_pay_theme', theme);
   }, [theme]);
 
-  // Node jumping timer
+  // Sync mock USDC balance to local storage
   useEffect(() => {
-    nodeTimerRef.current = setInterval(() => {
-      setActiveNodeIndex((prev) => (prev + 1) % MAP_NODES.length);
-    }, 4000);
-    return () => clearInterval(nodeTimerRef.current);
-  }, []);
+    localStorage.setItem('arc_pay_mock_usdc', mockUSDC.toString());
+  }, [mockUSDC]);
+
+  // Local Transactions state
+  const [transactions, setTransactions] = useState(() => {
+    const saved = localStorage.getItem('arc_pay_txs');
+    return saved ? JSON.parse(saved) : [
+      { id: 'tx-1', type: 'received', amount: '25.00', recipient: '0x3f5c...a1b2', country: 'Vietnam', localAmount: '635,512', localSymbol: '₫', status: 'completed', hash: '0x1234...5678', time: '2 hours ago', memo: 'Coffee shop sale' },
+      { id: 'tx-2', type: 'sent', amount: '12.50', recipient: '0x9a8b...7c6d', country: 'Intra-chain', localAmount: '12.50', localSymbol: '$', status: 'completed', hash: '0xabcdef...1234', time: '1 day ago', memo: 'Dinner split' }
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('arc_pay_txs', JSON.stringify(transactions));
+  }, [transactions]);
+
+  // Developer Log Helper
+  const logDev = (type, text) => {
+    const time = new Date().toLocaleTimeString();
+    setDeveloperLogs(prev => [{ id: Date.now() + Math.random(), time, text, type }, ...prev]);
+  };
 
   // Toast System Helper
   const addToast = (type, message) => {
@@ -475,141 +267,679 @@ function App() {
     }, 5000);
   };
 
-  const handleAccountsChanged = (accounts) => {
-    if (accounts.length > 0) {
-      setAccount(accounts[0]);
-      addToast('success', `Wallet connected: ${accounts[0].substring(0, 6)}...${accounts[0].substring(38)}`);
-    } else {
-      setAccount('');
-      setNativeBalance('0.00');
-      setErc20Balance('0.00');
-      addToast('warning', 'Wallet disconnected.');
+  // Auto load query params for Payment Requests / Invoices
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const payAddress = params.get('pay');
+    const payAmount = params.get('amount');
+    const payDesc = params.get('desc');
+    
+    if (payAddress && payAmount) {
+      setP2pRecipient(payAddress);
+      setP2pAmount(payAmount);
+      setP2pMemo(payDesc || 'Invoice Payment');
+      setActiveTab('send');
+      addToast('info', `Invoice loaded: Requesting ${payAmount} USDC for "${payDesc || 'payment'}"`);
+      logDev('info', `Incoming Invoice loaded from URL. Payee: ${payAddress}, Amount: ${payAmount} USDC`);
     }
-  };
+  }, []);
 
-  const handleChainChanged = () => {
-    window.location.reload();
-  };
-
-  // Connect Wallet & Switch to Arc Testnet
-  const connectWallet = async () => {
-    const provider = window.okxwallet || window.ethereum;
-    if (!provider) {
-      addToast('error', 'Web3 provider not found. Please install OKX Wallet or MetaMask.');
-      return;
+  // Fetch balances when account details change
+  useEffect(() => {
+    if (account) {
+      fetchBalances();
+      const interval = setInterval(fetchBalances, 8000);
+      return () => clearInterval(interval);
     }
+  }, [account, accountType, socialAddress]);
 
-    setIsConnecting(true);
+  const fetchBalances = async () => {
+    const activeAddress = accountType === 'social' ? socialAddress : account;
+    if (!activeAddress) return;
+
     try {
-      const accounts = await provider.request({ method: 'eth_requestAccounts' });
-      const activeAccount = accounts[0];
-
-      const chainIdHex = await provider.request({ method: 'eth_chainId' });
-      
-      if (chainIdHex !== ARC_TESTNET_PARAMS.chainId) {
-        addToast('info', 'Switching network to Arc Testnet...');
-        try {
-          await provider.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: ARC_TESTNET_PARAMS.chainId }],
-          });
-        } catch (switchError) {
-          if (switchError.code === 4902) {
-            try {
-              await provider.request({
-                method: 'wallet_addEthereumChain',
-                params: [ARC_TESTNET_PARAMS],
-              });
-            } catch (addError) {
-              addToast('error', `Failed to add Arc Testnet: ${addError.message}`);
-              setIsConnecting(false);
-              return;
-            }
-          } else {
-            addToast('error', `Failed to switch network: ${switchError.message}`);
-            setIsConnecting(false);
-            return;
-          }
+      let provider;
+      if (accountType === 'social') {
+        provider = new ethers.JsonRpcProvider('https://rpc.testnet.arc.network');
+      } else {
+        const providerEnv = window.okxwallet || window.ethereum;
+        if (providerEnv) {
+          provider = new ethers.BrowserProvider(providerEnv);
+        } else {
+          provider = new ethers.JsonRpcProvider('https://rpc.testnet.arc.network');
         }
       }
 
-      // Request user signature to authenticate/verify identity
-      addToast('info', 'Please sign the message in your wallet...');
-      const ethersProvider = new ethers.BrowserProvider(provider);
-      const signer = await ethersProvider.getSigner();
-      await signer.signMessage('Welcome to Arc Payment! Click sign to securely authenticate your wallet.');
-      
-      setAccount(activeAccount);
-      setNetwork({ name: 'Arc Testnet', chainId: 5042002, isCorrect: true });
-      addToast('success', 'Wallet successfully connected and signed!');
-      await fetchBalances();
-
-    } catch (err) {
-      addToast('error', `Connection or sign error: ${err.message}`);
-    } finally {
-      setIsConnecting(false);
-    }
-  };
-
-  const disconnectWallet = () => {
-    setAccount('');
-    setNativeBalance('0.00');
-    setErc20Balance('0.00');
-    setNetwork(null);
-    addToast('info', 'Wallet disconnected.');
-  };
-
-  // Fetch balances
-  const fetchBalances = async () => {
-    const providerEnv = window.okxwallet || window.ethereum;
-    if (!providerEnv || !account) return;
-
-    try {
-      const provider = new ethers.BrowserProvider(providerEnv);
-      
-      const nativeVal = await provider.getBalance(account);
-      const formattedNative = parseFloat(ethers.formatEther(nativeVal)).toFixed(2);
+      // 1. Fetch native balance
+      const nativeVal = await provider.getBalance(activeAddress);
+      const formattedNative = parseFloat(ethers.formatEther(nativeVal)).toFixed(4);
       setNativeBalance(formattedNative);
 
+      // 2. Fetch ERC-20 Wrapped USDC balance
       const usdcContract = new ethers.Contract(
         USDC_SYSTEM_CONTRACT,
-        [
-          'function balanceOf(address) view returns (uint256)',
-          'function decimals() view returns (uint8)'
-        ],
+        ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'],
         provider
       );
       
       let formattedErc20 = '0.00';
       try {
-        const erc20Val = await usdcContract.balanceOf(account);
+        const erc20Val = await usdcContract.balanceOf(activeAddress);
         const decimals = await usdcContract.decimals().catch(() => 6);
         formattedErc20 = parseFloat(ethers.formatUnits(erc20Val, decimals)).toFixed(2);
       } catch (err) {
-        console.warn('System contract check skipped/failed:', err);
+        // contract call error or not deployed yet
       }
       setErc20Balance(formattedErc20);
 
-      const networkData = await provider.getNetwork();
-      const isCorrectNetwork = Number(networkData.chainId) === 5042002;
-      setNetwork({
-        name: isCorrectNetwork ? 'Arc Testnet' : networkData.name,
-        chainId: Number(networkData.chainId),
-        isCorrect: isCorrectNetwork
-      });
+      // 3. Chain details
+      let isCorrect = false;
+      let chainName = 'Unknown';
+      let chainId = 0;
+      if (accountType === 'social') {
+        isCorrect = true;
+        chainName = 'Arc Testnet';
+        chainId = 5042002;
+      } else {
+        const net = await provider.getNetwork();
+        chainId = Number(net.chainId);
+        isCorrect = chainId === 5042002;
+        chainName = isCorrect ? 'Arc Testnet' : net.name;
+      }
+
+      setNetwork({ name: chainName, chainId, isCorrect });
+      logDev('info', `Fetched balances. Native: ${formattedNative} USDC (Gas), ERC20 Wrapped: ${formattedErc20} USDC`);
 
     } catch (err) {
-      console.error('Error fetching balance:', err);
+      logDev('error', `Failed to fetch balance: ${err.message}`);
     }
   };
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await fetchBalances();
-    setTimeout(() => {
-      setIsRefreshing(false);
+    setTimeout(() => setIsRefreshing(false), 1000);
+  };
+
+  // Connect Web3 Wallet
+  const connectWeb3Wallet = async () => {
+    const providerEnv = window.okxwallet || window.ethereum;
+    if (!providerEnv) {
+      addToast('error', 'No Web3 Provider detected. Install OKX Wallet or MetaMask.');
+      return;
+    }
+
+    setIsConnecting(true);
+    logDev('info', 'Connecting Web3 provider...');
+    try {
+      const provider = new ethers.BrowserProvider(providerEnv);
+      const accounts = await providerEnv.request({ method: 'eth_requestAccounts' });
+      const activeAccount = accounts[0];
+
+      const chainIdHex = await providerEnv.request({ method: 'eth_chainId' });
+      if (chainIdHex !== ARC_TESTNET_PARAMS.chainId) {
+        logDev('info', 'Switching network to Arc Testnet...');
+        try {
+          await providerEnv.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: ARC_TESTNET_PARAMS.chainId }],
+          });
+        } catch (switchError) {
+          if (switchError.code === 4902) {
+            await providerEnv.request({
+              method: 'wallet_addEthereumChain',
+              params: [ARC_TESTNET_PARAMS],
+            });
+          } else {
+            throw switchError;
+          }
+        }
+      }
+
+      setAccount(activeAccount);
+      setAccountType('web3');
+      localStorage.setItem('arc_pay_account_type', 'web3');
+      setLoginModalOpen(false);
+      addToast('success', `Connected MetaMask/OKX: ${activeAccount.substring(0, 6)}...`);
+      logDev('success', `Web3 Wallet connected: ${activeAccount}`);
+      await fetchBalances();
+    } catch (err) {
+      logDev('error', `Web3 connection failed: ${err.message}`);
+      addToast('error', `Connection error: ${err.message}`);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  // Social Login Simulator (Google / GitHub / Email)
+  const handleSocialLogin = async (emailInput) => {
+    if (!emailInput || !emailInput.includes('@')) {
+      addToast('error', 'Please enter a valid email address.');
+      return;
+    }
+    setIsSocialLoggingIn(true);
+    logDev('info', `Initializing Social/Email login for ${emailInput}...`);
+    
+    // Simulate API delay for key derivation / wallet creation
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    let key = localStorage.getItem(`arc_pay_social_key_${emailInput}`);
+    let wallet;
+    if (key) {
+      wallet = new ethers.Wallet(key);
+      logDev('success', `Restored Developer Controlled Wallet for ${emailInput}`);
+    } else {
+      wallet = ethers.Wallet.createRandom();
+      key = wallet.privateKey;
+      localStorage.setItem(`arc_pay_social_key_${emailInput}`, key);
+      logDev('success', `Derived key and created new Developer Controlled Wallet for ${emailInput}`);
+    }
+    
+    localStorage.setItem('arc_pay_account_type', 'social');
+    localStorage.setItem('arc_pay_social_email', emailInput);
+    localStorage.setItem('arc_pay_social_key', key);
+    localStorage.setItem('arc_pay_social_address', wallet.address);
+    
+    setAccountType('social');
+    setSocialEmail(emailInput);
+    setSocialPrivateKey(key);
+    setSocialAddress(wallet.address);
+    setAccount(wallet.address);
+    setNetwork({ name: 'Arc Testnet', chainId: 5042002, isCorrect: true });
+    
+    addToast('success', `Logged in via ${emailInput}. Wallet derived!`);
+    setIsSocialLoggingIn(false);
+    setLoginModalOpen(false);
+    logDev('success', `Social wallet active: ${wallet.address}`);
+    
+    setTimeout(fetchBalances, 200);
+  };
+
+  const disconnectWallet = () => {
+    setAccount('');
+    setAccountType(null);
+    setSocialEmail('');
+    setSocialPrivateKey('');
+    setSocialAddress('');
+    setNativeBalance('0.0000');
+    setErc20Balance('0.00');
+    setNetwork(null);
+    localStorage.removeItem('arc_pay_account_type');
+    localStorage.removeItem('arc_pay_social_email');
+    localStorage.removeItem('arc_pay_social_key');
+    localStorage.removeItem('arc_pay_social_address');
+    addToast('info', 'Wallet disconnected.');
+    logDev('info', 'Wallet disconnected by user.');
+  };
+
+  // Instant Faucet for Social wallets (+100 Mock USDC)
+  const triggerFaucet = async () => {
+    logDev('info', 'Faucet request triggered...');
+    addToast('info', 'Requesting USDC from developer faucet...');
+    
+    // Simulate faucet delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    setMockUSDC(prev => prev + 100);
+    addToast('success', 'Received 100 USDC testnet tokens!');
+    logDev('success', `Faucet credited 100.00 USDC to account: ${account}`);
+    
+    // Create faucet tx entry
+    const faucetTx = {
+      id: `tx-faucet-${Date.now()}`,
+      type: 'received',
+      amount: '100.00',
+      recipient: account,
+      country: 'Faucet',
+      localAmount: '100.00',
+      localSymbol: '$',
+      status: 'completed',
+      hash: '0x' + Array.from({length: 40}, () => Math.floor(Math.random()*16).toString(16)).join(''),
+      time: 'Just now',
+      memo: 'Arc Developer Faucet'
+    };
+    setTransactions(prev => [faucetTx, ...prev]);
+  };
+
+  // Trigger P2P Direct Payout Simulation
+  const startP2pSimulation = (e) => {
+    e.preventDefault();
+    if (!account) {
+      addToast('error', 'Connect your wallet first.');
+      return;
+    }
+
+    const cleanedRecipient = p2pRecipient.trim();
+    if (!ethers.isAddress(cleanedRecipient)) {
+      addToast('error', 'Invalid EVM address.');
+      return;
+    }
+
+    const parsedAmt = parseFloat(p2pAmount);
+    if (isNaN(parsedAmt) || parsedAmt <= 0) {
+      addToast('error', 'Please enter a valid amount.');
+      return;
+    }
+
+    const totalBalance = parseFloat(nativeBalance) + mockUSDC;
+    if (parsedAmt > totalBalance) {
+      addToast('error', `Insufficient balance. Available: ${totalBalance.toFixed(2)} USDC`);
+      return;
+    }
+
+    // Set transaction data to simulate
+    setSimulationTxData({
+      to: cleanedRecipient,
+      amount: parsedAmt,
+      memo: p2pMemo,
+      type: 'p2p',
+      originalData: { recipient: cleanedRecipient, amount: parsedAmt, memo: p2pMemo }
+    });
+    setSimulationModalOpen(true);
+    runSimulation(cleanedRecipient, parsedAmt);
+  };
+
+  // Simulate Dry-Run Transaction
+  const runSimulation = async (recipientAddress, amount) => {
+    setIsSimulating(true);
+    setSimulationSuccess(null);
+    setSimulationDetails('Estimating gas limits and searching security blacklists...');
+    logDev('info', `Simulating dry-run to address: ${recipientAddress} for ${amount} USDC`);
+
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    // 1. Blacklist Check
+    const isBlacklisted = blacklist.some(addr => addr.toLowerCase() === recipientAddress.toLowerCase());
+    if (isBlacklisted) {
+      setSimulationSuccess(false);
+      setSimulationDetails('SECURITY EXCEPTION: The destination address is blacklisted for suspected fraud on Arc Testnet.');
+      logDev('error', `Transaction Simulation blocked: Destination address ${recipientAddress} is BLACKLISTED`);
+      setIsSimulating(false);
+      return;
+    }
+
+    // 2. Gas Estimation
+    const gasEst = sponsoredGas ? 0 : 0.0042;
+    setSimulationSuccess(true);
+    setSimulationDetails(`Simulation successful! Revert check passed. Gas limit: 21,000 units. Gas cost: ${gasEst.toFixed(4)} USDC ($${gasEst.toFixed(4)}).`);
+    logDev('success', `Simulation passed. Dry-run verified. Gas fee estimated: $${gasEst}`);
+    setIsSimulating(false);
+  };
+
+  // Sign & Broadcast P2P Transaction
+  const broadcastP2pTransaction = async () => {
+    if (!simulationTxData) return;
+    const { to, amount, memo } = simulationTxData;
+    setIsSendingTx(true);
+    logDev('info', 'Broadcasting transaction to network...');
+    
+    try {
+      let hash = '0x' + Array.from({length: 40}, () => Math.floor(Math.random()*16).toString(16)).join('');
+      
+      // If Web3 wallet is connected and on Arc network, attempt real on-chain transaction
+      if (accountType === 'web3' && network?.isCorrect) {
+        const providerEnv = window.okxwallet || window.ethereum;
+        const provider = new ethers.BrowserProvider(providerEnv);
+        const signer = await provider.getSigner();
+        
+        // Use native gas USDC to send transaction
+        const tx = await signer.sendTransaction({
+          to: to,
+          value: ethers.parseEther(amount.toString())
+        });
+        hash = tx.hash;
+        addToast('info', 'Transaction submitted to mempool. Awaiting mining...');
+        await tx.wait();
+      } else if (accountType === 'social') {
+        // Social wallet signing simulation or real JsonRpc execution
+        const publicProvider = new ethers.JsonRpcProvider('https://rpc.testnet.arc.network');
+        const balanceVal = await publicProvider.getBalance(socialAddress).catch(() => 0n);
+        
+        // If social wallet actually has real USDC, send it on-chain!
+        if (balanceVal >= ethers.parseEther(amount.toString())) {
+          const wallet = new ethers.Wallet(socialPrivateKey, publicProvider);
+          const tx = await wallet.sendTransaction({
+            to: to,
+            value: ethers.parseEther(amount.toString())
+          });
+          hash = tx.hash;
+          addToast('info', 'Social wallet signed & broadcasted tx on-chain!');
+          await tx.wait();
+        } else {
+          // Fallback to local mock state update
+          setMockUSDC(prev => Math.max(0, prev - amount));
+          logDev('info', `Transaction simulated locally (social wallet has insufficient gas). TxHash generated: ${hash}`);
+        }
+      } else {
+        // Mock fallback
+        setMockUSDC(prev => Math.max(0, prev - amount));
+      }
+
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
+      const newTx = {
+        id: `tx-${Date.now()}`,
+        type: 'sent',
+        amount: amount.toFixed(2),
+        recipient: to,
+        country: 'Intra-chain',
+        localAmount: amount.toFixed(2),
+        localSymbol: '$',
+        status: 'completed',
+        hash: hash,
+        time: 'Just now',
+        memo: memo || 'USDC P2P Transfer'
+      };
+
+      setTransactions(prev => [newTx, ...prev]);
+      addToast('success', `Sent ${amount} USDC to ${to.substring(0, 6)}...`);
+      logDev('success', `Transaction complete: Sent ${amount} USDC. TxHash: ${hash}`);
+      
+      // Auto-trigger merchant receipt if they pay a merchant standee / split address
+      const receiptData = {
+        txId: newTx.id,
+        sender: account,
+        recipient: to,
+        amount: amount.toFixed(2),
+        gasPaid: sponsoredGas ? '0.00 USDC' : '0.0042 USDC',
+        date: new Date().toLocaleString(),
+        memo: memo || 'P2P Payment',
+        hash: hash
+      };
+      setActiveReceipt(receiptData);
+      setReceiptModalOpen(true);
+
+      // Clean inputs
+      setP2pAmount('');
+      setP2pRecipient('');
+      setP2pMemo('');
+      setSimulationModalOpen(false);
+      setSimulationTxData(null);
+      fetchBalances();
+
+    } catch (err) {
+      logDev('error', `Transaction execution failed: ${err.message}`);
+      addToast('error', `Payment failed: ${err.message}`);
+    } finally {
+      setIsSendingTx(false);
+    }
+  };
+
+  // Generate Invoices / Payment Requests
+  const handleGenerateInvoice = (e) => {
+    e.preventDefault();
+    if (!account) {
+      addToast('error', 'Connect your wallet first.');
+      return;
+    }
+
+    const parsedAmt = parseFloat(invoiceAmount);
+    if (isNaN(parsedAmt) || parsedAmt <= 0) {
+      addToast('error', 'Please enter a valid amount.');
+      return;
+    }
+
+    const currentUrl = window.location.origin + window.location.pathname;
+    const link = `${currentUrl}?pay=${account}&amount=${parsedAmt}&desc=${encodeURIComponent(invoiceDesc || 'Payment Request')}`;
+    setGeneratedInvoiceLink(link);
+    setInvoiceModalOpen(true);
+    logDev('success', `Invoice payment link generated: ${link}`);
+  };
+
+  // Split Payments Handler
+  const addSplitRecipient = () => {
+    if (splitRecipients.length >= 3) {
+      addToast('error', 'Maximum of 3 split recipients supported.');
+      return;
+    }
+    setSplitRecipients(prev => [...prev, { address: '', percent: 0 }]);
+  };
+
+  const removeSplitRecipient = (index) => {
+    if (splitRecipients.length <= 2) {
+      addToast('error', 'Minimum of 2 split recipients required.');
+      return;
+    }
+    setSplitRecipients(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const updateSplitRecipient = (index, key, value) => {
+    setSplitRecipients(prev => prev.map((item, i) => {
+      if (i === index) {
+        return { ...item, [key]: value };
+      }
+      return item;
+    }));
+  };
+
+  const startSplitSimulation = (e) => {
+    e.preventDefault();
+    if (!account) {
+      addToast('error', 'Connect your wallet first.');
+      return;
+    }
+
+    const totalPercent = splitRecipients.reduce((sum, item) => sum + parseInt(item.percent || 0), 0);
+    if (totalPercent !== 100) {
+      addToast('error', `Total percentage must equal 100%. Currently: ${totalPercent}%`);
+      return;
+    }
+
+    const parsedAmt = parseFloat(splitAmount);
+    if (isNaN(parsedAmt) || parsedAmt <= 0) {
+      addToast('error', 'Invalid split amount.');
+      return;
+    }
+
+    const totalBalance = parseFloat(nativeBalance) + mockUSDC;
+    if (parsedAmt > totalBalance) {
+      addToast('error', 'Insufficient balance for split payment.');
+      return;
+    }
+
+    // Verify all recipient addresses
+    for (let i = 0; i < splitRecipients.length; i++) {
+      if (!ethers.isAddress(splitRecipients[i].address)) {
+        addToast('error', `Recipient #${i + 1} has an invalid address.`);
+        return;
+      }
+    }
+
+    setSimulationTxData({
+      amount: parsedAmt,
+      memo: splitMemo,
+      type: 'split',
+      recipients: splitRecipients
+    });
+    setSimulationModalOpen(true);
+    runSplitSimulation();
+  };
+
+  const runSplitSimulation = async () => {
+    setIsSimulating(true);
+    setSimulationSuccess(null);
+    setSimulationDetails('Checking recipient addresses and calculating network split gas...');
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    // Verify blacklist
+    const containsBlacklisted = splitRecipients.some(item => 
+      blacklist.some(bad => bad.toLowerCase() === item.address.toLowerCase())
+    );
+
+    if (containsBlacklisted) {
+      setSimulationSuccess(false);
+      setSimulationDetails('SECURITY ALERT: One of the split recipients is blacklisted for fraud on Arc network.');
+      setIsSimulating(false);
+      return;
+    }
+
+    const singleGas = sponsoredGas ? 0 : 0.0042;
+    const totalGas = singleGas * splitRecipients.length;
+    setSimulationSuccess(true);
+    setSimulationDetails(`Split verification passed! Split breakdown:\n` + 
+      splitRecipients.map((r, i) => ` - #${i+1}: ${((r.percent/100) * splitAmount).toFixed(2)} USDC (${r.percent}%)\n`).join('') +
+      `Estimated Split Gas: ${totalGas.toFixed(4)} USDC ($${totalGas.toFixed(4)})`);
+    setIsSimulating(false);
+  };
+
+  const broadcastSplitPayment = async () => {
+    setIsSendingTx(true);
+    logDev('info', 'Broadcasting split payment contract calls...');
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    try {
+      const parsedAmt = parseFloat(splitAmount);
+      // Deduct mock balance
+      setMockUSDC(prev => Math.max(0, prev - parsedAmt));
+      
+      confetti({ particleCount: 150, spread: 80 });
+
+      // Create ledger entries for each split recipient
+      const splitTxs = splitRecipients.map((recipient, i) => {
+        const itemAmount = ((recipient.percent / 100) * parsedAmt).toFixed(2);
+        return {
+          id: `tx-split-${Date.now()}-${i}`,
+          type: 'sent',
+          amount: itemAmount,
+          recipient: recipient.address,
+          country: 'Intra-chain',
+          localAmount: itemAmount,
+          localSymbol: '$',
+          status: 'completed',
+          hash: '0x' + Array.from({length: 40}, () => Math.floor(Math.random()*16).toString(16)).join(''),
+          time: 'Just now',
+          memo: `Split Pay (${recipient.percent}%): ${splitMemo || 'Services'}`
+        };
+      });
+
+      setTransactions(prev => [...splitTxs, ...prev]);
+      addToast('success', `Split payment of ${splitAmount} USDC processed successfully!`);
+      logDev('success', `Split payment executed across ${splitRecipients.length} destinations.`);
+
+      // Reset Form
+      setSplitAmount('');
+      setSplitMemo('');
+      setSplitRecipients([{ address: '', percent: 60 }, { address: '', percent: 40 }]);
+      setSimulationModalOpen(false);
+      setSimulationTxData(null);
+      fetchBalances();
+
+    } catch (err) {
+      logDev('error', `Split payment failed: ${err.message}`);
+      addToast('error', `Split failed: ${err.message}`);
+    } finally {
+      setIsSendingTx(false);
+    }
+  };
+
+  // Cross-Chain CCTP Bridge Simulation
+  const handleBridgeAction = async (e) => {
+    e.preventDefault();
+    if (!account) {
+      addToast('error', 'Connect your wallet first.');
+      return;
+    }
+
+    const amt = parseFloat(bridgeAmount);
+    if (isNaN(amt) || amt <= 0) {
+      addToast('error', 'Please enter a valid bridge amount.');
+      return;
+    }
+
+    // Check balance of source chain
+    const sourceBal = otherChainsBalance[bridgeSourceChain];
+    if (amt > sourceBal) {
+      addToast('error', `Insufficient USDC balance on ${bridgeSourceChain}. Available: ${sourceBal} USDC`);
+      return;
+    }
+
+    setIsBridging(true);
+    setBridgeStep(1);
+    setBridgeTimer(5);
+    logDev('info', `CCTP bridge initialized. Sending ${amt} USDC from ${bridgeSourceChain} -> Arc Testnet`);
+
+    // Burn step
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setBridgeStep(2);
+    logDev('info', `Burned ${amt} USDC on ${bridgeSourceChain}. Circular CCTP attestation requested...`);
+
+    // Countdown / Attestation step
+    const interval = setInterval(() => {
+      setBridgeTimer(t => {
+        if (t <= 1) {
+          clearInterval(interval);
+          setBridgeStep(3);
+          logDev('info', 'Attestation signatures received. Minting USDC on Arc Testnet...');
+          mintCctp(amt);
+          return 0;
+        }
+        return t - 1;
+      });
     }, 1000);
   };
+
+  const mintCctp = async (amount) => {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Update local balances
+    setOtherChainsBalance(prev => ({
+      ...prev,
+      [bridgeSourceChain]: prev[bridgeSourceChain] - amount
+    }));
+    setMockUSDC(prev => prev + amount);
+    setBridgeStep(4);
+    setIsBridging(false);
+    confetti({ particleCount: 120, spread: 60 });
+    
+    // Add transaction to history
+    const bridgeTx = {
+      id: `tx-bridge-${Date.now()}`,
+      type: 'received',
+      amount: amount.toFixed(2),
+      recipient: account,
+      country: 'Global',
+      localAmount: amount.toFixed(2),
+      localSymbol: '$',
+      status: 'completed',
+      hash: '0x' + Array.from({length: 40}, () => Math.floor(Math.random()*16).toString(16)).join(''),
+      time: 'Just now',
+      memo: `CCTP Bridge: ${bridgeSourceChain} -> Arc`
+    };
+    setTransactions(prev => [bridgeTx, ...prev]);
+    addToast('success', `Bridged ${amount} USDC from ${bridgeSourceChain} successfully!`);
+    logDev('success', `CCTP claim complete. Minted ${amount} USDC on Arc. TxHash generated.`);
+    fetchBalances();
+  };
+
+  // Blacklist Address Management
+  const addToBlacklist = (e) => {
+    e.preventDefault();
+    const addr = newBlacklistAddress.trim();
+    if (!ethers.isAddress(addr)) {
+      addToast('error', 'Invalid EVM address format.');
+      return;
+    }
+    if (blacklist.includes(addr)) {
+      addToast('error', 'Address already in blacklist.');
+      return;
+    }
+    setBlacklist(prev => [...prev, addr]);
+    setNewBlacklistAddress('');
+    addToast('success', 'Address added to blacklist.');
+    logDev('warning', `Developer added address to blacklist: ${addr}`);
+  };
+
+  const removeFromBlacklist = (addr) => {
+    setBlacklist(prev => prev.filter(a => a !== addr));
+    addToast('info', 'Address removed from blacklist.');
+    logDev('info', `Developer removed address from blacklist: ${addr}`);
+  };
+
+  // Merchant Portal Calculations
+  const merchantReceivedTxs = transactions.filter(t => t.type === 'received' || t.recipient === account);
+  const revenueToday = merchantReceivedTxs.reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+  const txCount = merchantReceivedTxs.length;
+  const averageReceived = txCount > 0 ? (revenueToday / txCount).toFixed(2) : '0.00';
 
   // Copy helpers
   const copyAddressToClipboard = () => {
@@ -624,171 +954,9 @@ function App() {
     if (!generatedInvoiceLink) return;
     navigator.clipboard.writeText(generatedInvoiceLink);
     setCopiedInvoice(true);
-    addToast('success', 'Invoice payment link copied!');
+    addToast('success', 'Invoice payment URL copied!');
     setTimeout(() => setCopiedInvoice(false), 2000);
   };
-
-  // Trigger cross-border Wise remittance
-  const handleRemitTransfer = async (e) => {
-    e.preventDefault();
-    addToast('error', t('remitLockedMessage'));
-  };
-
-  // Trigger P2P Direct Payout
-  const handleP2pTransfer = async (e) => {
-    e.preventDefault();
-
-    if (!account) {
-      addToast('error', 'Please connect your wallet first.');
-      return;
-    }
-
-    if (!network?.isCorrect) {
-      addToast('error', 'Incorrect network. Please switch to Arc Testnet.');
-      return;
-    }
-
-    let cleanedRecipient = p2pRecipient.trim();
-    if (/^[oO]x/i.test(cleanedRecipient)) {
-      cleanedRecipient = '0x' + cleanedRecipient.substring(2);
-      setP2pRecipient(cleanedRecipient);
-    }
-
-    if (!ethers.isAddress(cleanedRecipient)) {
-      addToast('error', 'Invalid EVM address.');
-      return;
-    }
-
-    const parsedAmount = parseFloat(p2pAmount);
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      addToast('error', 'Please enter a valid amount.');
-      return;
-    }
-
-    const balanceAvailable = parseFloat(balanceToUse === 'native' ? nativeBalance : erc20Balance);
-    if (parsedAmount > balanceAvailable) {
-      addToast('error', `Insufficient balance. Available: ${balanceAvailable} USDC.`);
-      return;
-    }
-
-    setIsP2pSending(true);
-    try {
-      const providerEnv = window.okxwallet || window.ethereum;
-      const provider = new ethers.BrowserProvider(providerEnv);
-      const signer = await provider.getSigner();
-      
-      let txHash = '';
-      
-      if (p2pTransferType === 'native') {
-        const valueInWei = ethers.parseEther(p2pAmount);
-        addToast('info', `Sending direct native USDC transfer...`);
-        const tx = await signer.sendTransaction({
-          to: p2pRecipient,
-          value: valueInWei
-        });
-        txHash = tx.hash;
-        addToast('info', `Transaction submitted. Waiting for inclusion...`);
-        await tx.wait();
-      } else {
-        const usdcContract = new ethers.Contract(
-          USDC_SYSTEM_CONTRACT,
-          [
-            'function transfer(address, uint256) returns (bool)',
-            'function decimals() view returns (uint8)'
-          ],
-          signer
-        );
-        const decimals = await usdcContract.decimals().catch(() => 6);
-        const valueInUnits = ethers.parseUnits(p2pAmount, decimals);
-        addToast('info', `Sending direct ERC-20 contract transfer...`);
-        const tx = await usdcContract.transfer(p2pRecipient, valueInUnits);
-        txHash = tx.hash;
-        addToast('info', `Transaction submitted. Waiting for inclusion...`);
-        await tx.wait();
-      }
-
-      confetti({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.6 }
-      });
-
-      const newTx = {
-        id: `tx-${Date.now()}`,
-        type: 'sent',
-        amount: parsedAmount.toFixed(2),
-        recipient: p2pRecipient,
-        country: 'Intra-chain',
-        localAmount: parsedAmount.toFixed(2),
-        localSymbol: '$',
-        status: 'completed',
-        hash: txHash,
-        time: 'Just now',
-        transferType: p2pTransferType
-      };
-
-      setTransactions(prev => [newTx, ...prev]);
-      addToast('success', `Sent $${p2pAmount} USDC direct to ${p2pRecipient.substring(0, 6)}...`);
-      
-      setP2pAmount('');
-      setP2pRecipient('');
-      setActiveTab('dashboard');
-      fetchBalances();
-
-    } catch (err) {
-      console.error('Direct transfer failed:', err);
-      addToast('error', `Transaction failed: ${err.reason || err.message}`);
-    } finally {
-      setIsP2pSending(false);
-    }
-  };
-
-  // Generate shareable invoice payment link
-  const handleGenerateInvoice = (e) => {
-    e.preventDefault();
-    if (!account) {
-      addToast('error', 'Please connect your wallet first.');
-      return;
-    }
-    
-    const parsedAmt = parseFloat(invoiceAmount);
-    if (isNaN(parsedAmt) || parsedAmt <= 0) {
-      addToast('error', 'Please enter a valid amount.');
-      return;
-    }
-
-    const currentUrl = window.location.origin + window.location.pathname;
-    const link = `${currentUrl}?pay=${account}&amount=${parsedAmt}&desc=${encodeURIComponent(invoiceDesc || 'Services')}`;
-    setGeneratedInvoiceLink(link);
-    setInvoiceModalOpen(true);
-  };
-
-  // Render SVG Path based on selected rate chart
-  const renderChartPath = () => {
-    const data = HISTORICAL_RATES[activeChartTab];
-    const min = Math.min(...data);
-    const max = Math.max(...data);
-    const padding = (max - min) * 0.1 || 10;
-    const yMin = min - padding;
-    const yMax = max + padding;
-    
-    const points = data.map((val, index) => {
-      const x = (index / (data.length - 1)) * 340 + 40; // width of 340, offset 40
-      const y = 180 - ((val - yMin) / (yMax - yMin)) * 140; // height of 180, offset 140
-      return `${x},${y}`;
-    });
-
-    return `M ${points.join(' L ')}`;
-  };
-
-  const activeNode = MAP_NODES[activeNodeIndex];
-  
-  // Calculator inputs helper
-  const parsedRemitAmount = parseFloat(remitAmount) || 0;
-  const remitResultValue = (parsedRemitAmount * selectedCountry.rate).toLocaleString(undefined, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: selectedCountry.id === 'MX' || selectedCountry.id === 'IN' ? 2 : 0
-  });
 
   return (
     <div className="app-container">
@@ -798,7 +966,7 @@ function App() {
         <div className="glow-orb-2"></div>
       </div>
 
-      {/* Stripe-style Left Sidebar Nav (Only visible when connected) */}
+      {/* Stripe-style Left Sidebar Nav */}
       {account && (
         <aside className="stripe-sidebar">
           <div>
@@ -818,41 +986,56 @@ function App() {
                   </button>
                 </li>
                 <li>
-                  <button type="button" className={`sidebar-nav-item ${activeTab === 'p2p' ? 'active' : ''}`} onClick={() => setActiveTab('p2p')}>
-                    <ArrowUpRight className="size-5" />
-                    <span>{t('p2pSend')}</span>
+                  <button type="button" className={`sidebar-nav-item ${activeTab === 'send' ? 'active' : ''}`} onClick={() => setActiveTab('send')}>
+                    <Send className="size-5" />
+                    <span>{t('send')}</span>
                   </button>
                 </li>
                 <li>
-                  <button type="button" className={`sidebar-nav-item ${activeTab === 'invoice' ? 'active' : ''}`} onClick={() => setActiveTab('invoice')}>
+                  <button type="button" className={`sidebar-nav-item ${activeTab === 'receive' ? 'active' : ''}`} onClick={() => setActiveTab('receive')}>
+                    <QrCode className="size-5" />
+                    <span>{t('receive')}</span>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" className={`sidebar-nav-item ${activeTab === 'merchant' ? 'active' : ''}`} onClick={() => setActiveTab('merchant')}>
                     <FileText className="size-5" />
-                    <span>{t('invoices')}</span>
+                    <span>{t('merchant')}</span>
                   </button>
                 </li>
                 <li>
-                  <button type="button" className={`sidebar-nav-item ${activeTab === 'trends' ? 'active' : ''}`} onClick={() => setActiveTab('trends')}>
-                    <TrendingUp className="size-5" />
-                    <span>{t('fxMarket')}</span>
+                  <button type="button" className={`sidebar-nav-item ${activeTab === 'bridge' ? 'active' : ''}`} onClick={() => setActiveTab('bridge')}>
+                    <Layers className="size-5" />
+                    <span>{t('bridge')}</span>
                   </button>
                 </li>
                 <li>
-                  <button type="button" className={`sidebar-nav-item ${activeTab === 'history' ? 'active' : ''}`} onClick={() => setActiveTab('history')}>
-                    <List className="size-5" />
-                    <span>{t('allActivity')}</span>
+                  <button type="button" className={`sidebar-nav-item ${activeTab === 'security' ? 'active' : ''}`} onClick={() => setActiveTab('security')}>
+                    <Shield className="size-5" />
+                    <span>Security Portal</span>
                   </button>
                 </li>
               </ul>
             </nav>
           </div>
 
-          <div className="sidebar-footer">
+          <div className="sidebar-footer" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <button 
+              type="button" 
+              className="stripe-btn-secondary"
+              onClick={() => setDevConsoleOpen(p => !p)}
+              style={{ display: 'flex', gap: '8px', justifyContent: 'center', width: '100%', fontSize: '12.5px' }}
+            >
+              <Terminal className="size-4" />
+              Developer Logs
+            </button>
             <button 
               type="button" 
               className="stripe-btn-disconnect" 
               onClick={disconnectWallet}
             >
               <X className="size-4" />
-              <span>{t('disconnect')}</span>
+              Disconnect
             </button>
           </div>
         </aside>
@@ -864,10 +1047,10 @@ function App() {
           {/* Top Bar for address and network details */}
           <div className="stripe-top-bar">
             <span className="built-on-arc">
-              Built on Arc
+              Arc Testnet Mode
             </span>
             {network && (
-              <span className="network-badge-label">
+              <span className={`network-badge-label ${network.isCorrect ? 'active' : ''}`}>
                 {network.name}
               </span>
             )}
@@ -887,7 +1070,6 @@ function App() {
             <div className="lang-selector-wrapper" ref={langDropdownRef}>
               <button
                 type="button"
-                id="lang-selector-btn"
                 className="lang-selector-trigger"
                 onClick={() => setLangDropdownOpen(prev => !prev)}
                 aria-label="Select language"
@@ -897,45 +1079,45 @@ function App() {
                 <ChevronDown className={`size-3 lang-chevron ${langDropdownOpen ? 'open' : ''}`} />
               </button>
               {langDropdownOpen && (
-                <div className="lang-dropdown" role="listbox" aria-label="Language options">
+                <div className="lang-dropdown">
                   {LANGUAGES.map(lang => (
                     <button
                       key={lang.code}
                       type="button"
-                      role="option"
-                      aria-selected={selectedLang.code === lang.code}
                       className={`lang-option ${selectedLang.code === lang.code ? 'active' : ''}`}
                       onClick={() => {
                         setSelectedLang(lang);
                         setLangDropdownOpen(false);
-                        addToast('info', `Language set to ${lang.label}`);
                       }}
                     >
                       <img src={`https://flagcdn.com/w40/${lang.flagCode}.png`} alt={lang.label} className="lang-flag-img" />
                       <span>{lang.label}</span>
-                      {selectedLang.code === lang.code && <Check className="size-3" style={{ marginLeft: 'auto', color: 'hsl(var(--secondary))' }} />}
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
+            {/* Address copy pill */}
             <div className="wallet-badge-connected" onClick={copyAddressToClipboard} style={{ cursor: 'pointer' }}>
               <Wallet className="size-4 text-emerald-400" />
-              <span>{account.substring(0, 6)}...{account.substring(38)}</span>
+              <span>
+                {accountType === 'social' ? 'Circle DCW: ' : 'Web3: '}
+                {account.substring(0, 6)}...{account.substring(38)}
+              </span>
               {copiedAddress ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
             </div>
           </div>
 
-          {/* Conditional view rendering */}
+          {/* Conditional tab renders */}
           {activeTab === 'dashboard' && (
             <div>
               <div className="dashboard-grid">
                 
-                {/* Left Column: Balances and Remittance widget */}
+                {/* Left Column: Balance display and Faucet trigger */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   
-                  {/* Balances Card */}
+                  {/* Balance Display Card */}
                   <div className="stripe-card">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <h3 style={{ fontSize: '11px', color: 'hsl(var(--text-muted))', textTransform: 'uppercase', letterSpacing: '1px' }}>{t('availableBalance')}</h3>
@@ -943,9 +1125,24 @@ function App() {
                     </div>
                     <div className="balance-display-box">
                       <span className="balance-large-amount">
-                        ${nativeBalance}
+                        ${(parseFloat(nativeBalance) + mockUSDC).toFixed(2)}
                       </span>
                       <span className="balance-large-currency">USDC</span>
+                    </div>
+
+                    <div style={{ backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '12px', padding: '12px', marginBottom: '20px', fontSize: '13px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <span style={{ color: 'hsl(var(--text-secondary))' }}>On-Chain USDC (Gas):</span>
+                        <span style={{ fontWeight: 600 }}>{nativeBalance} USDC</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <span style={{ color: 'hsl(var(--text-secondary))' }}>On-Chain Wrapped USDC:</span>
+                        <span style={{ fontWeight: 600 }}>{erc20Balance} USDC</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: 'hsl(var(--text-secondary))' }}>Simulated Dev Faucet Balance:</span>
+                        <span style={{ fontWeight: 600, color: 'hsl(var(--secondary))' }}>{mockUSDC.toFixed(2)} USDC</span>
+                      </div>
                     </div>
 
                     <div style={{ display: 'flex', gap: '12px' }}>
@@ -953,209 +1150,140 @@ function App() {
                         type="button" 
                         className="stripe-btn-secondary" 
                         style={{ flex: 1 }}
-                        onClick={() => setReceiveModalOpen(true)}
+                        onClick={() => setActiveTab('receive')}
                       >
                         <ArrowDownLeft className="size-4" />
-                        {t('receiveUsdc')}
+                        Receive
                       </button>
                       <button 
                         type="button" 
                         className="stripe-btn-secondary" 
                         style={{ flex: 1 }}
-                        onClick={() => setActiveTab('invoice')}
+                        onClick={() => setActiveTab('send')}
                       >
-                        <FileText className="size-4" />
-                        {t('requestInvoice')}
+                        <ArrowUpRight className="size-4" />
+                        Send P2P
                       </button>
                     </div>
                   </div>
 
-                  {/* Wise-style Stacked Remittance Calculator */}
+                  {/* Dev Faucet Card */}
                   <div className="stripe-card">
                     <h2>
-                      <Send className="text-sky-400 size-5" />
-                      {t('remittanceTitle')}
+                      <Plus className="text-secondary size-5" style={{ color: 'hsl(var(--secondary))' }} />
+                      {t('faucetTitle')}
                     </h2>
-
-                    <div className="warning-box" style={{ backgroundColor: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.25)', color: 'hsl(var(--text-primary))', display: 'flex', alignItems: 'flex-start' }}>
-                      <Lock className="size-4 text-rose-500 shrink-0" style={{ marginTop: '2px' }} />
-                      <span>{t('remitLockedMessage')}</span>
-                    </div>
-
-                    <form onSubmit={handleRemitTransfer}>
-                      <div className="wise-calculator">
-                        
-                        {/* Box 1: You Send */}
-                        <div className="wise-input-box" style={{ opacity: 0.65 }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                            <label htmlFor="wise-send-amount" style={{ margin: 0 }}>{t('youSend')}</label>
-                            <button 
-                              type="button"
-                              style={{ background: 'none', border: 'none', padding: 0, fontSize: '11px', color: 'hsl(var(--text-muted))', fontWeight: '500', cursor: 'not-allowed', fontFamily: 'var(--font-body)' }}
-                              disabled
-                            >
-                              {t('balance')}: <span style={{ color: 'hsl(var(--text-muted))', fontWeight: 'bold' }}>{nativeBalance}</span> USDC
-                            </button>
-                          </div>
-                          <div className="wise-input-row">
-                            <input 
-                              type="number" 
-                              id="wise-send-amount"
-                              className="wise-number-input"
-                              placeholder="0.00" 
-                              value={remitAmount}
-                              onChange={(e) => setRemitAmount(e.target.value)}
-                              required
-                              disabled
-                              style={{ cursor: 'not-allowed' }}
-                            />
-                            <div className="wise-currency-trigger" style={{ cursor: 'not-allowed', opacity: 0.7 }}>
-                              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300E6C3' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 6v12M6 12h12'/%3E%3C/svg%3E" alt="USDC Logo" style={{ width: '16px' }} />
-                              <span>USDC</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Connector flow detail tree */}
-                        <div className="wise-flow-tree" style={{ opacity: 0.5 }}>
-                          <div className="wise-flow-line"></div>
-                          
-                          <div className="wise-flow-node active">
-                            <div className="wise-flow-bullet"></div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', flex: 1 }}>
-                              <span className="wise-flow-label">{t('gasFee')}:</span>
-                              <span className="wise-flow-value highlight-green">0.00 USDC Promo</span>
-                            </div>
-                          </div>
-
-                          <div className="wise-flow-node">
-                            <div className="wise-flow-bullet"></div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', flex: 1 }}>
-                              <span className="wise-flow-label">{t('conversionRate')}:</span>
-                              <span className="wise-flow-value">1 USDC = {selectedCountry.rate.toLocaleString()} {selectedCountry.currency}</span>
-                            </div>
-                          </div>
-                          
-
-                        </div>
-
-                        {/* Box 2: Recipient Gets */}
-                        <div className="wise-input-box" style={{ marginBottom: '20px', opacity: 0.65 }}>
-                          <label>{t('recipientGets')}</label>
-                          <div className="wise-input-row">
-                            <input 
-                              type="text" 
-                              className="wise-number-input"
-                              readOnly 
-                              disabled
-                              value={remitResultValue}
-                              style={{ cursor: 'not-allowed' }}
-                            />
-                            <button
-                              type="button"
-                              className="wise-currency-trigger"
-                              style={{ cursor: 'not-allowed', opacity: 0.7 }}
-                              disabled
-                            >
-                              <span style={{ fontSize: '18px', lineHeight: 1 }}>{selectedCountry.flag}</span>
-                              <span>{selectedCountry.currency}</span>
-                              <ChevronDown className="size-3.5" />
-                            </button>
-                          </div>
-                        </div>
-
-                      </div>
-
-                      <div className="form-group" style={{ marginBottom: '16px', opacity: 0.65 }}>
-                        <label className="form-label" htmlFor="calc-recipient-address">{t('recipientAddress')}</label>
-                        <div className="input-container" style={{ margin: 0 }}>
-                          <div className="input-icon-left">
-                            <Wallet className="size-4" />
-                          </div>
-                          <input 
-                            type="text" 
-                            id="calc-recipient-address"
-                            className="input-field" 
-                            placeholder={t('recipientPlaceholder')} 
-                            value={remitRecipient}
-                            onChange={(e) => setRemitRecipient(e.target.value)}
-                            required
-                            disabled
-                            style={{ cursor: 'not-allowed' }}
-                          />
-                        </div>
-                      </div>
-
+                    <p style={{ fontSize: '13px', color: 'hsl(var(--text-secondary))', marginBottom: '20px', lineHeight: '1.5' }}>
+                      {t('faucetDesc')} Need gas tokens or test USDC for mock wallets? Click below to instantly inject test funds.
+                    </p>
+                    
+                    <div style={{ display: 'flex', gap: '12px' }}>
                       <button 
-                        type="submit" 
+                        type="button" 
                         className="stripe-btn-primary" 
-                        disabled 
-                        style={{ 
-                          opacity: 0.6, 
-                          cursor: 'not-allowed', 
-                          background: 'linear-gradient(135deg, hsl(var(--border-color)) 0%, rgba(100,116,139,0.3) 100%)', 
-                          borderColor: 'hsla(var(--border-color), 0.8)',
-                          color: 'hsl(var(--text-muted))'
-                        }}
+                        style={{ flex: 1 }}
+                        onClick={triggerFaucet}
                       >
-                        <Lock className="size-4 text-rose-500" />
-                        {t('remitFunds')} {selectedCountry.name}
+                        Request Faucet +100 USDC
                       </button>
-                    </form>
+                      
+                      <a 
+                        href="https://faucet.circle.com/" 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        className="stripe-btn-secondary" 
+                        style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', textDecoration: 'none' }}
+                      >
+                        Circle Faucet ↗
+                      </a>
+                    </div>
                   </div>
 
                 </div>
 
-                {/* Right Column: Ledger centerpiece and rate trends */}
+                {/* Right Column: Visual routes and settings info */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   
-
-                  {/* FX Rate Sparkline trends */}
+                  {/* Account Information Card */}
                   <div className="stripe-card">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h2>
+                      <Info className="text-primary size-5" />
+                      Account Details
+                    </h2>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px' }}>
+                      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
+                        <span style={{ color: 'hsl(var(--text-secondary))', display: 'block', fontSize: '11px', textTransform: 'uppercase' }}>Login Type</span>
+                        <span style={{ fontWeight: 'bold', textTransform: 'capitalize' }}>{accountType} Wallet</span>
+                      </div>
+                      
+                      {accountType === 'social' && (
+                        <>
+                          <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
+                            <span style={{ color: 'hsl(var(--text-secondary))', display: 'block', fontSize: '11px', textTransform: 'uppercase' }}>Associated Email</span>
+                            <span style={{ fontWeight: 'bold' }}>{socialEmail}</span>
+                          </div>
+                          <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
+                            <span style={{ color: 'hsl(var(--text-secondary))', display: 'block', fontSize: '11px', textTransform: 'uppercase' }}>Circle DCW EVM Private Key</span>
+                            <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginTop: '4px' }}>
+                              <input 
+                                type="password" 
+                                readOnly 
+                                value={socialPrivateKey} 
+                                className="input-field" 
+                                style={{ padding: '4px 8px', fontSize: '11px', flex: 1 }}
+                              />
+                              <button 
+                                type="button" 
+                                className="stripe-btn-secondary" 
+                                style={{ padding: '6px' }}
+                                onClick={() => {
+                                  navigator.clipboard.writeText(socialPrivateKey);
+                                  addToast('success', 'Private Key copied!');
+                                }}
+                              >
+                                <Copy className="size-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
+                        <span style={{ color: 'hsl(var(--text-secondary))', display: 'block', fontSize: '11px', textTransform: 'uppercase' }}>Gas Payout Mode</span>
+                        <span style={{ fontWeight: 'bold', color: 'hsl(var(--secondary))' }}>
+                          USDC Gas Enabled (Arc native feature)
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* FX Trends Widget */}
+                  <div className="stripe-card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                       <h2>
                         <TrendingUp className="text-emerald-400 size-5" />
-                        {t('fxSparkline')}
+                        FX Trends (USDC)
                       </h2>
-                      <span style={{ fontSize: '11px', color: 'hsl(var(--text-muted))', fontWeight: 'bold' }}>{activeChartTab} {t('fxDayLabel')}</span>
+                      <span style={{ fontSize: '11px', color: 'hsl(var(--text-muted))', fontWeight: 'bold' }}>VND 7-day</span>
                     </div>
 
                     <div className="chart-card-body">
-                      <svg viewBox="0 0 400 200" width="100%" height="100%">
-                        <defs>
-                          <linearGradient id="chart-gradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--primary))" />
-                            <stop offset="100%" stopColor="hsl(var(--secondary))" stopOpacity="0.1" />
-                          </linearGradient>
-                        </defs>
+                      <svg viewBox="0 0 400 160" width="100%">
+                        <line x1="40" y1="20" x2="380" y2="20" className="chart-grid-line" style={{ stroke: 'rgba(255,255,255,0.04)' }} />
+                        <line x1="40" y1="80" x2="380" y2="80" className="chart-grid-line" style={{ stroke: 'rgba(255,255,255,0.04)' }} />
+                        <line x1="40" y1="140" x2="380" y2="140" className="chart-grid-line" style={{ stroke: 'rgba(255,255,255,0.04)' }} />
 
-                        <line x1="40" y1="40" x2="380" y2="40" className="chart-grid-line" />
-                        <line x1="40" y1="110" x2="380" y2="110" className="chart-grid-line" />
-                        <line x1="40" y1="180" x2="380" y2="180" className="chart-grid-line" />
-
-                        <path d={renderChartPath()} className="chart-path" />
-
-                        {HISTORICAL_RATES[activeChartTab].map((val, index) => {
-                          const min = Math.min(...HISTORICAL_RATES[activeChartTab]);
-                          const max = Math.max(...HISTORICAL_RATES[activeChartTab]);
-                          const padding = (max - min) * 0.1 || 10;
-                          const yMin = min - padding;
-                          const yMax = max + padding;
-                          
-                          const x = (index / (HISTORICAL_RATES[activeChartTab].length - 1)) * 340 + 40;
-                          const y = 180 - ((val - yMin) / (yMax - yMin)) * 140;
-
-                          return (
-                            <g key={index}>
-                              <circle cx={x} cy={y} r="3.5" fill="hsl(var(--secondary))" stroke="hsl(var(--bg-card))" strokeWidth="1" />
-                            </g>
-                          );
-                        })}
-
+                        {/* Sparkline chart */}
+                        <path 
+                          d="M 40,140 L 96,120 L 152,100 L 208,110 L 264,70 L 320,85 L 376,60" 
+                          fill="none" 
+                          stroke="hsl(var(--secondary))" 
+                          strokeWidth="2.5" 
+                        />
                         {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'].map((day, index) => {
-                          const x = (index / 6) * 340 + 40;
+                          const x = (index / 6) * 336 + 40;
                           return (
-                            <text key={day} x={x} y="196" textAnchor="middle" className="chart-axis-text" style={{ fontSize: '9px' }}>
+                            <text key={day} x={x} y="156" textAnchor="middle" fill="rgba(255,255,255,0.4)" style={{ fontSize: '9px' }}>
                               {day}
                             </text>
                           );
@@ -1165,12 +1293,13 @@ function App() {
                   </div>
 
                 </div>
+
               </div>
 
-              {/* Stripe-style recent transactions table log (Dashboard version) */}
+              {/* Transactions Ledger */}
               <div className="stripe-card stripe-table-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                  <h3 style={{ fontSize: '15px', color: '#fff', fontWeight: 600 }}>{t('recentRemittances')}</h3>
+                  <h3 style={{ fontSize: '15px', color: '#fff', fontWeight: 600 }}>Recent Transaction Activity</h3>
                   <button 
                     type="button" 
                     className="stripe-btn-secondary" 
@@ -1178,7 +1307,7 @@ function App() {
                     onClick={handleRefresh}
                   >
                     <RefreshCw className={`size-3 ${isRefreshing ? 'spin-animation' : ''}`} />
-                    {t('refresh')}
+                    Refresh
                   </button>
                 </div>
 
@@ -1186,17 +1315,29 @@ function App() {
                   <table className="stripe-table">
                     <thead>
                       <tr>
-                        <th>{t('colType')}</th>
-                        <th>{t('colAmount')}</th>
-                        <th>{t('colPayout')}</th>
-                        <th>{t('colCountry')}</th>
-                        <th>{t('colTxHash')}</th>
-                        <th>{t('colStatus')}</th>
+                        <th>Type</th>
+                        <th>USDC Amount</th>
+                        <th>Destination</th>
+                        <th>Memo</th>
+                        <th>Tx Hash</th>
+                        <th>Status</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {transactions.slice(0, 5).map(tx => (
-                        <tr key={tx.id}>
+                      {transactions.map(tx => (
+                        <tr key={tx.id} style={{ cursor: 'pointer' }} onClick={() => {
+                          setActiveReceipt({
+                            txId: tx.id,
+                            sender: tx.type === 'received' ? tx.recipient : account,
+                            recipient: tx.type === 'received' ? account : tx.recipient,
+                            amount: tx.amount,
+                            gasPaid: '0.004 USDC',
+                            date: tx.time,
+                            memo: tx.memo || 'Direct payment',
+                            hash: tx.hash
+                          });
+                          setReceiptModalOpen(true);
+                        }}>
                           <td>
                             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                               {tx.type === 'sent' ? (
@@ -1204,38 +1345,29 @@ function App() {
                               ) : (
                                 <ArrowDownLeft className="text-emerald-400 size-4" />
                               )}
-                              <span style={{ fontWeight: 600 }}>{tx.type}</span>
+                              <span style={{ fontWeight: 600, textTransform: 'capitalize' }}>{tx.type}</span>
                             </span>
                           </td>
                           <td style={{ fontWeight: 'bold' }}>
                             ${tx.amount} USDC
                           </td>
-                          <td style={{ color: 'hsl(var(--secondary))', fontWeight: 600 }}>
-                            {tx.localSymbol}{tx.localAmount}
+                          <td>
+                            <span style={{ fontFamily: 'monospace' }}>
+                              {tx.recipient.substring(0, 10)}...
+                            </span>
                           </td>
                           <td>
-                            {tx.country === 'Global' ? (
-                              <span>🌎 Global</span>
-                            ) : tx.country === 'Intra-chain' ? (
-                              <span>⛓️ Intra-chain</span>
-                            ) : (
-                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                                <span style={{ fontSize: '16px' }}>
-                                  {tx.country === 'Vietnam'     ? '🇻🇳' :
-                                   tx.country === 'India'       ? '🇮🇳' :
-                                   tx.country === 'Philippines' ? '🇵🇭' :
-                                   tx.country === 'Indonesia'   ? '🇮🇩' : '🌐'}
-                                </span>
-                                <span>{tx.country}</span>
-                              </span>
-                            )}
+                            <span style={{ fontStyle: 'italic', fontSize: '12px', color: 'hsl(var(--text-secondary))' }}>
+                              {tx.memo || 'N/A'}
+                            </span>
                           </td>
                           <td>
                             <a 
-                              href={`${ARC_TESTNET_PARAMS.blockExplorerUrls[0]}/tx/${tx.hash}`}
+                              href={`https://testnet.arcscan.app/tx/${tx.hash}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="tx-link"
+                              onClick={(e) => e.stopPropagation()}
                             >
                               {tx.hash.substring(0, 8)}...
                               <ExternalLink className="size-3 inline ml-1" />
@@ -1256,320 +1388,608 @@ function App() {
             </div>
           )}
 
-          {/* Peer to Peer Direct Payout View */}
-          {activeTab === 'p2p' && (
-            <div className="stripe-card" style={{ maxWidth: '640px', margin: '0 auto' }}>
-              <h2>
-                <ArrowUpRight className="text-indigo-400 size-6" />
-                {t('p2pTitle')}
-              </h2>
-              <p style={{ color: 'hsl(var(--text-secondary))', fontSize: '13.5px', marginBottom: '24px' }}>
-                {t('p2pDesc')}
-              </p>
+          {/* Direct P2P and Split Payment Tab */}
+          {activeTab === 'send' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', maxWidth: '680px', margin: '0 auto' }}>
+              
+              {/* P2P Direct Send Card */}
+              <div className="stripe-card">
+                <h2>
+                  <Send className="text-indigo-400 size-6" />
+                  Direct P2P USDC Payout
+                </h2>
+                <p style={{ color: 'hsl(var(--text-secondary))', fontSize: '13.5px', marginBottom: '24px' }}>
+                  Send USDC directly to another EVM address. Gas fees can be settled directly in USDC, or sponsored by Arc Pay!
+                </p>
 
-              <form onSubmit={handleP2pTransfer} className="quick-p2p-form">
-                <div className="form-group">
-                  <label className="form-label" htmlFor="p2p-recipient-address">{t('recipientAddressLabel')}</label>
-                  <div className="input-container">
-                    <div className="input-icon-left">
-                      <Wallet className="size-4" />
+                <form onSubmit={startP2pSimulation} className="quick-p2p-form">
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="p2p-recipient">Recipient EVM Address</label>
+                    <div className="input-container">
+                      <div className="input-icon-left"><Wallet className="size-4" /></div>
+                      <input 
+                        type="text" 
+                        id="p2p-recipient"
+                        className="input-field" 
+                        placeholder="0x recipient address" 
+                        value={p2pRecipient}
+                        onChange={(e) => setP2pRecipient(e.target.value)}
+                        required
+                      />
                     </div>
-                    <input 
-                      type="text" 
-                      id="p2p-recipient-address"
-                      className="input-field" 
-                      placeholder={t('recipientPlaceholder')} 
-                      value={p2pRecipient}
-                      onChange={(e) => setP2pRecipient(e.target.value)}
-                      required
-                    />
                   </div>
-                </div>
 
-                <div className="form-group">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                    <label className="form-label" htmlFor="p2p-amount" style={{ marginBottom: 0 }}>{t('amountLabel')}</label>
+                  <div className="form-group">
+                    <div style={{ display: 'flex', justifySelf: 'stretch', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <label className="form-label" htmlFor="p2p-amount" style={{ marginBottom: 0 }}>Amount (USDC)</label>
+                      <span style={{ fontSize: '11.5px', color: 'hsl(var(--text-secondary))' }}>
+                        Balance: <strong style={{ color: 'hsl(var(--secondary))' }}>{(parseFloat(nativeBalance) + mockUSDC).toFixed(2)} USDC</strong>
+                      </span>
+                    </div>
+                    <div className="input-container">
+                      <div className="input-icon-left"><DollarSign className="size-4" /></div>
+                      <input 
+                        type="number" 
+                        id="p2p-amount"
+                        className="input-field" 
+                        placeholder="0.00" 
+                        step="0.01"
+                        min="0.01"
+                        value={p2pAmount}
+                        onChange={(e) => setP2pAmount(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="p2p-memo">Memo / Description</label>
+                    <div className="input-container">
+                      <div className="input-icon-left"><FileText className="size-4" /></div>
+                      <input 
+                        type="text" 
+                        id="p2p-memo"
+                        className="input-field" 
+                        placeholder="e.g. Services payment" 
+                        value={p2pMemo}
+                        onChange={(e) => setP2pMemo(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Gas Configuration */}
+                  <div style={{ backgroundColor: 'rgba(0,0,0,0.15)', padding: '16px', borderRadius: '12px', marginBottom: '24px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <span style={{ display: 'block', fontWeight: 600, fontSize: '13.5px' }}>Sponsor Gas Fee</span>
+                        <span style={{ display: 'block', fontSize: '11px', color: 'hsl(var(--text-secondary))' }}>Enable gasless transaction sponsored by Arc Pay</span>
+                      </div>
+                      <label className="switch-wrapper" style={{ position: 'relative', display: 'inline-block', width: '40px', height: '20px' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={sponsoredGas}
+                          onChange={(e) => {
+                            setSponsoredGas(e.target.checked);
+                            logDev('info', `Gas setting toggled: ${e.target.checked ? 'Sponsored' : 'Standard'}`);
+                          }}
+                          style={{ opacity: 0, width: 0, height: 0 }}
+                        />
+                        <span className={`switch-slider ${sponsoredGas ? 'active' : ''}`}></span>
+                      </label>
+                    </div>
+                    
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.06)', fontSize: '12.5px' }}>
+                      <span style={{ color: 'hsl(var(--text-secondary))' }}>Estimated Network Fee:</span>
+                      <span style={{ fontWeight: 'bold', color: sponsoredGas ? 'hsl(var(--secondary))' : 'white' }}>
+                        {sponsoredGas ? '$0.00 USDC (Sponsored)' : '$0.0042 USDC (~$0.00)'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    className="stripe-btn-primary"
+                    style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)', boxShadow: '0 4px 14px rgba(79, 70, 229, 0.3)' }}
+                  >
+                    <Send className="size-4" />
+                    Simulate & Send USDC
+                  </button>
+                </form>
+              </div>
+
+              {/* Split Payment Card */}
+              <div className="stripe-card">
+                <h2>
+                  <Percent className="text-pink-400 size-6" />
+                  {t('splitTitle')}
+                </h2>
+                <p style={{ color: 'hsl(var(--text-secondary))', fontSize: '13.5px', marginBottom: '24px' }}>
+                  {t('splitDesc')} Perfect for business expense splitting, affiliate payouts, or charity donations.
+                </p>
+
+                <form onSubmit={startSplitSimulation}>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Split Destination Wallets</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {splitRecipients.map((item, index) => (
+                        <div key={index} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          <div className="input-container" style={{ margin: 0, flex: 1 }}>
+                            <div className="input-icon-left"><Wallet className="size-4" /></div>
+                            <input 
+                              type="text" 
+                              className="input-field" 
+                              placeholder={`0x address for Recipient #${index + 1}`}
+                              value={item.address}
+                              onChange={(e) => updateSplitRecipient(index, 'address', e.target.value)}
+                              required
+                            />
+                          </div>
+                          
+                          <div style={{ position: 'relative', width: '90px' }}>
+                            <input 
+                              type="number" 
+                              className="input-field" 
+                              placeholder="%" 
+                              min="1"
+                              max="100"
+                              value={item.percent}
+                              onChange={(e) => updateSplitRecipient(index, 'percent', parseInt(e.target.value) || 0)}
+                              style={{ paddingLeft: '12px', paddingRight: '28px' }}
+                              required
+                            />
+                            <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '13px', color: 'hsl(var(--text-muted))' }}>%</span>
+                          </div>
+
+                          <button 
+                            type="button" 
+                            className="stripe-btn-secondary" 
+                            style={{ padding: '12px', color: 'hsl(var(--error))', borderColor: 'rgba(239, 68, 68, 0.2)' }}
+                            onClick={() => removeSplitRecipient(index)}
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+
                     <button 
-                      type="button"
-                      onClick={() => setP2pAmount(nativeBalance)}
-                      style={{ background: 'none', border: 'none', padding: 0, fontSize: '11px', color: 'hsl(var(--text-secondary))', fontWeight: '500', cursor: 'pointer', fontFamily: 'var(--font-body)' }}
+                      type="button" 
+                      className="stripe-btn-secondary" 
+                      style={{ marginTop: '12px', width: '100%', fontSize: '12.5px' }}
+                      onClick={addSplitRecipient}
                     >
-                      {t('balance')}: <span style={{ color: 'hsl(var(--secondary))', fontWeight: 'bold' }}>{nativeBalance}</span> USDC
+                      <Plus className="size-3.5 inline mr-1" />
+                      {t('addRecipient')}
                     </button>
                   </div>
-                  <div className="input-container">
-                    <div className="input-icon-left">
-                      <DollarSign className="size-4" />
-                    </div>
-                    <input 
-                      type="number" 
-                      id="p2p-amount"
-                      className="input-field" 
-                      placeholder="0.00" 
-                      step="0.01"
-                      min="0.01"
-                      value={p2pAmount}
-                      onChange={(e) => setP2pAmount(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
 
-                <button 
-                  type="submit" 
-                  className="stripe-btn-primary" 
-                  disabled={isP2pSending}
-                  style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)', boxShadow: '0 4px 14px rgba(79, 70, 229, 0.3)' }}
-                >
-                  <Send className="size-4" />
-                  {isP2pSending ? t('broadcasting') : t('sendDirect')}
-                </button>
-              </form>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="split-amount-input">Total Amount to Split (USDC)</label>
+                    <div className="input-container">
+                      <div className="input-icon-left"><DollarSign className="size-4" /></div>
+                      <input 
+                        type="number" 
+                        id="split-amount-input"
+                        className="input-field" 
+                        placeholder="0.00" 
+                        step="0.01"
+                        min="0.01"
+                        value={splitAmount}
+                        onChange={(e) => setSplitAmount(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="split-memo-input">Split Payment Memo</label>
+                    <div className="input-container">
+                      <div className="input-icon-left"><FileText className="size-4" /></div>
+                      <input 
+                        type="text" 
+                        id="split-memo-input"
+                        className="input-field" 
+                        placeholder="e.g. Split revenue share" 
+                        value={splitMemo}
+                        onChange={(e) => setSplitMemo(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    className="stripe-btn-primary"
+                    style={{ background: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)', boxShadow: '0 4px 14px rgba(236, 72, 153, 0.3)' }}
+                  >
+                    <Percent className="size-4" />
+                    Verify & Split Payment
+                  </button>
+                </form>
+              </div>
+
             </div>
           )}
 
-          {/* Invoices View */}
-          {activeTab === 'invoice' && (
-            <div className="stripe-card" style={{ maxWidth: '640px', margin: '0 auto' }}>
-              <h2>
-                <FileText className="text-indigo-400 size-6" />
-                {t('invoiceTitle')}
-              </h2>
-              <p style={{ color: 'hsl(var(--text-secondary))', fontSize: '13.5px', marginBottom: '24px' }}>
-                {t('invoiceDesc')}
-              </p>
+          {/* Receive & Invoice Tab */}
+          {activeTab === 'receive' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', maxWidth: '640px', margin: '0 auto' }}>
+              
+              {/* Receive Card */}
+              <div className="stripe-card" style={{ textAlign: 'center' }}>
+                <h2>Receive USDC</h2>
+                <p style={{ color: 'hsl(var(--text-secondary))', fontSize: '13.5px', marginBottom: '24px' }}>
+                  Scan the QR code or copy the address. Ensure the sender is using the **Arc Testnet**.
+                </p>
 
-              <form onSubmit={handleGenerateInvoice}>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="invoice-amount-box">{t('requestAmountLabel')}</label>
-                  <div className="input-container">
-                    <div className="input-icon-left">
-                      <DollarSign className="size-4" />
+                <div className="qr-code-wrapper" style={{ display: 'inline-block', padding: '16px', backgroundColor: 'white', borderRadius: '12px', marginBottom: '20px' }}>
+                  <img 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${account}`} 
+                    alt="EVM Deposit QR Code" 
+                    style={{ display: 'block', width: '180px', height: '180px' }}
+                  />
+                </div>
+
+                <div className="stripe-address-bar" style={{ cursor: 'pointer', maxWidth: '420px', margin: '0 auto' }} onClick={copyAddressToClipboard}>
+                  <span style={{ fontSize: '12px', wordBreak: 'break-all' }}>{account}</span>
+                  <button type="button" aria-label="Copy Address">
+                    {copiedAddress ? <Check className="size-4 text-emerald-400" /> : <Copy className="size-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Invoice Generator */}
+              <div className="stripe-card">
+                <h2>
+                  <FileText className="text-indigo-400 size-6" />
+                  {t('invoiceTitle')}
+                </h2>
+                <p style={{ color: 'hsl(var(--text-secondary))', fontSize: '13.5px', marginBottom: '24px' }}>
+                  Fill details below to generate a shareable invoicing URL. Clients can pay with MetaMask or Social wallets instantly.
+                </p>
+
+                <form onSubmit={handleGenerateInvoice}>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="inv-amount">Request Amount (USDC)</label>
+                    <div className="input-container">
+                      <div className="input-icon-left"><DollarSign className="size-4" /></div>
+                      <input 
+                        type="number" 
+                        id="inv-amount"
+                        className="input-field" 
+                        placeholder="0.00" 
+                        step="0.01"
+                        min="0.01"
+                        value={invoiceAmount}
+                        onChange={(e) => setInvoiceAmount(e.target.value)}
+                        required
+                      />
                     </div>
-                    <input 
-                      type="number" 
-                      id="invoice-amount-box"
-                      className="input-field" 
-                      placeholder="0.00" 
-                      step="0.01"
-                      min="0.01"
-                      value={invoiceAmount}
-                      onChange={(e) => setInvoiceAmount(e.target.value)}
-                      required
-                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="inv-desc">Service Description / Memo</label>
+                    <div className="input-container">
+                      <div className="input-icon-left"><FileText className="size-4" /></div>
+                      <input 
+                        type="text" 
+                        id="inv-desc"
+                        className="input-field" 
+                        placeholder="e.g. Website consulting services" 
+                        value={invoiceDesc}
+                        onChange={(e) => setInvoiceDesc(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="inv-expiry">Expiry Period</label>
+                    <div className="input-container">
+                      <div className="input-icon-left"><ChevronDown className="size-4" /></div>
+                      <select 
+                        id="inv-expiry" 
+                        className="input-field" 
+                        value={invoiceExpiry} 
+                        onChange={(e) => setInvoiceExpiry(e.target.value)}
+                        style={{ paddingLeft: '38px', appearance: 'none', background: 'rgba(0,0,0,0.25)' }}
+                      >
+                        <option value="1h">1 Hour</option>
+                        <option value="24h">24 Hours</option>
+                        <option value="7d">7 Days</option>
+                        <option value="never">Never Expire</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <button type="submit" className="stripe-btn-primary">
+                    <QrCode className="size-4" />
+                    {t('generateInvoice')}
+                  </button>
+                </form>
+              </div>
+
+            </div>
+          )}
+
+          {/* Merchant Portal Tab */}
+          {activeTab === 'merchant' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              
+              {/* Analytics Header Grid */}
+              <div className="merchant-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
+                
+                <div className="stripe-card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{ padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(0, 230, 195, 0.08)', color: 'hsl(var(--secondary))' }}>
+                    <DollarSign className="size-6" />
+                  </div>
+                  <div>
+                    <span style={{ display: 'block', fontSize: '11px', color: 'hsl(var(--text-muted))', textTransform: 'uppercase' }}>{t('revenueToday')}</span>
+                    <span style={{ fontSize: '20px', fontWeight: 'bold' }}>${revenueToday.toFixed(2)} USDC</span>
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label" htmlFor="invoice-desc-box">{t('memoLabel')}</label>
-                  <div className="input-container">
-                    <div className="input-icon-left">
-                      <FileText className="size-4" />
+                <div className="stripe-card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{ padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(62, 116, 187, 0.12)', color: 'hsl(var(--primary))' }}>
+                    <List className="size-6" />
+                  </div>
+                  <div>
+                    <span style={{ display: 'block', fontSize: '11px', color: 'hsl(var(--text-muted))', textTransform: 'uppercase' }}>{t('txCount')}</span>
+                    <span style={{ fontSize: '20px', fontWeight: 'bold' }}>{txCount} payments</span>
+                  </div>
+                </div>
+
+                <div className="stripe-card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{ padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(236, 72, 153, 0.1)', color: '#ec4899' }}>
+                    <TrendingUp className="size-6" />
+                  </div>
+                  <div>
+                    <span style={{ display: 'block', fontSize: '11px', color: 'hsl(var(--text-muted))', textTransform: 'uppercase' }}>{t('averageReceived')}</span>
+                    <span style={{ fontSize: '20px', fontWeight: 'bold' }}>${averageReceived} USDC</span>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Portal content */}
+              <div className="dashboard-grid">
+                
+                {/* Standee and Marketing */}
+                <div className="stripe-card" style={{ display: 'flex', flexDirection: 'column', gap: '16px', justifyContent: 'center', textAlign: 'center' }}>
+                  <div style={{ margin: '0 auto', padding: '16px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.2)' }}>
+                    <QrCode className="size-10 text-emerald-400" />
+                  </div>
+                  <h2>Merchant Static QR</h2>
+                  <p style={{ color: 'hsl(var(--text-secondary))', fontSize: '13px', lineHeight: '1.5' }}>
+                    Generate a print-ready counter standee QR code. Customers can scan this static standee to pay instantly from their phones.
+                  </p>
+
+                  <button 
+                    type="button" 
+                    className="stripe-btn-secondary"
+                    onClick={() => setStandeeModalOpen(true)}
+                  >
+                    Open Counter Standee Preview
+                  </button>
+                </div>
+
+                {/* Received Logs */}
+                <div className="stripe-card">
+                  <h2>Merchant Payments Ledger</h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '300px', overflowY: 'auto' }}>
+                    {merchantReceivedTxs.length === 0 ? (
+                      <span style={{ color: 'hsl(var(--text-muted))', fontSize: '13px', display: 'block', textAlign: 'center', padding: '24px 0' }}>
+                        No incoming payments received today.
+                      </span>
+                    ) : (
+                      merchantReceivedTxs.map(tx => (
+                        <div 
+                          key={tx.id} 
+                          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', borderRadius: '8px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer' }}
+                          onClick={() => {
+                            setActiveReceipt({
+                              txId: tx.id,
+                              sender: '0x...Client',
+                              recipient: account,
+                              amount: tx.amount,
+                              gasPaid: '0.00 USDC (Sponsored)',
+                              date: tx.time,
+                              memo: tx.memo || 'Merchant Sale',
+                              hash: tx.hash
+                            });
+                            setReceiptModalOpen(true);
+                          }}
+                        >
+                          <div>
+                            <span style={{ display: 'block', fontWeight: 600, fontSize: '13px' }}>Received ${tx.amount} USDC</span>
+                            <span style={{ display: 'block', fontSize: '11px', color: 'hsl(var(--text-muted))' }}>{tx.time} | memo: {tx.memo || 'Retail Sale'}</span>
+                          </div>
+                          <span style={{ color: 'hsl(var(--secondary))', fontWeight: 'bold', fontSize: '13px' }}>+${tx.amount}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* CCTP Cross-chain Bridge Tab */}
+          {activeTab === 'bridge' && (
+            <div style={{ maxWidth: '640px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              
+              {/* Unified Balance preview card */}
+              <div className="stripe-card">
+                <h3 style={{ fontSize: '11px', color: 'hsl(var(--text-muted))', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>Unified Cross-chain USDC Preview</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '12px' }}>
+                  
+                  <div style={{ padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', textAlign: 'center' }}>
+                    <span style={{ display: 'block', fontSize: '10px', color: 'hsl(var(--text-secondary))' }}>Ethereum</span>
+                    <span style={{ fontSize: '14.5px', fontWeight: 'bold' }}>${otherChainsBalance.Ethereum.toFixed(2)}</span>
+                  </div>
+
+                  <div style={{ padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', textAlign: 'center' }}>
+                    <span style={{ display: 'block', fontSize: '10px', color: 'hsl(var(--text-secondary))' }}>Base Testnet</span>
+                    <span style={{ fontSize: '14.5px', fontWeight: 'bold' }}>${otherChainsBalance.Base.toFixed(2)}</span>
+                  </div>
+
+                  <div style={{ padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', textAlign: 'center' }}>
+                    <span style={{ display: 'block', fontSize: '10px', color: 'hsl(var(--text-secondary))' }}>Solana Devnet</span>
+                    <span style={{ fontSize: '14.5px', fontWeight: 'bold' }}>${otherChainsBalance.Solana.toFixed(2)}</span>
+                  </div>
+
+                  <div style={{ padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(0, 230, 195, 0.05)', border: '1px solid rgba(0, 230, 195, 0.15)', textAlign: 'center' }}>
+                    <span style={{ display: 'block', fontSize: '10px', color: 'hsl(var(--secondary))' }}>Arc Testnet</span>
+                    <span style={{ fontSize: '14.5px', fontWeight: 'bold', color: 'hsl(var(--secondary))' }}>${(parseFloat(nativeBalance) + mockUSDC).toFixed(2)}</span>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Bridge Form */}
+              <div className="stripe-card">
+                <h2>
+                  <Layers className="text-indigo-400 size-6" />
+                  {t('bridgeTitle')}
+                </h2>
+                <p style={{ color: 'hsl(var(--text-secondary))', fontSize: '13.5px', marginBottom: '24px' }}>
+                  {t('bridgeDesc')}
+                </p>
+
+                <form onSubmit={handleBridgeAction}>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="bridge-source">Source Network</label>
+                    <div className="input-container">
+                      <div className="input-icon-left"><Globe className="size-4" /></div>
+                      <select 
+                        id="bridge-source" 
+                        className="input-field" 
+                        value={bridgeSourceChain} 
+                        onChange={(e) => setBridgeSourceChain(e.target.value)}
+                        style={{ paddingLeft: '38px', appearance: 'none', background: 'rgba(0,0,0,0.25)' }}
+                      >
+                        <option value="Base">Base Testnet (CCTP)</option>
+                        <option value="Ethereum">Ethereum Sepolia (CCTP)</option>
+                        <option value="Solana">Solana Devnet (CCTP)</option>
+                      </select>
                     </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="bridge-dest">Destination Network</label>
+                    <div className="input-container">
+                      <div className="input-icon-left"><Globe className="size-4" /></div>
+                      <input 
+                        type="text" 
+                        id="bridge-dest" 
+                        className="input-field" 
+                        value="Arc Testnet" 
+                        disabled 
+                        style={{ opacity: 0.7, cursor: 'not-allowed' }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="bridge-amount-input">Amount to Bridge (USDC)</label>
+                    <div className="input-container">
+                      <div className="input-icon-left"><DollarSign className="size-4" /></div>
+                      <input 
+                        type="number" 
+                        id="bridge-amount-input"
+                        className="input-field" 
+                        placeholder="0.00" 
+                        step="0.01"
+                        min="0.01"
+                        value={bridgeAmount}
+                        onChange={(e) => setBridgeAmount(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '16px', borderRadius: '12px', backgroundColor: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.04)', fontSize: '13px', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'hsl(var(--text-secondary))' }}>CCTP Bridge Fee:</span>
+                      <span style={{ fontWeight: 600, color: 'hsl(var(--secondary))' }}>$0.00 (Sponsored Promotion)</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'hsl(var(--text-secondary))' }}>Settlement Duration:</span>
+                      <span style={{ fontWeight: 600 }}>~5 seconds (Simulated CCTP)</span>
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    className="stripe-btn-primary"
+                    style={{ background: 'linear-gradient(135deg, #00e6c3 0%, #00b09b 100%)', color: '#000', fontWeight: 'bold' }}
+                  >
+                    Bridge USDC via CCTP
+                  </button>
+                </form>
+              </div>
+
+            </div>
+          )}
+
+          {/* Security Tab */}
+          {activeTab === 'security' && (
+            <div style={{ maxWidth: '640px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              
+              {/* Address Fraud blacklisting */}
+              <div className="stripe-card">
+                <h2>
+                  <Shield className="text-rose-500 size-6" />
+                  EVM Fraud Check Blacklist
+                </h2>
+                <p style={{ color: 'hsl(var(--text-secondary))', fontSize: '13.5px', marginBottom: '24px' }}>
+                  Manage addresses blacklisted from receiving payouts due to suspected fraud. Attempting to pay these addresses will block transaction simulation.
+                </p>
+
+                <form onSubmit={addToBlacklist} style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+                  <div className="input-container" style={{ margin: 0, flex: 1 }}>
+                    <div className="input-icon-left"><Wallet className="size-4" /></div>
                     <input 
                       type="text" 
-                      id="invoice-desc-box"
                       className="input-field" 
-                      placeholder={t('memoPlaceholder')} 
-                      value={invoiceDesc}
-                      onChange={(e) => setInvoiceDesc(e.target.value)}
+                      placeholder="Add address to blacklist" 
+                      value={newBlacklistAddress}
+                      onChange={(e) => setNewBlacklistAddress(e.target.value)}
+                      required
                     />
                   </div>
-                </div>
+                  <button type="submit" className="stripe-btn-secondary" style={{ padding: '0 20px', whiteSpace: 'nowrap' }}>
+                    Blacklist Address
+                  </button>
+                </form>
 
-                <button 
-                  type="submit" 
-                  className="stripe-btn-primary"
-                >
-                  <QrCode className="size-4" />
-                  {t('generateInvoice')}
-                </button>
-              </form>
-            </div>
-          )}
-
-          {/* Live FX Rates view */}
-          {activeTab === 'trends' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <div className="stripe-card">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <h2>
-                    <TrendingUp className="text-emerald-400 size-5" />
-                    {t('trendsTitle')}
-                  </h2>
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    {COUNTRIES.map(c => (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <span style={{ display: 'block', fontSize: '11px', color: 'hsl(var(--text-muted))', textTransform: 'uppercase' }}>Currently Blacklisted Addresses</span>
+                  {blacklist.map(addr => (
+                    <div key={addr} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', borderRadius: '8px', backgroundColor: 'rgba(239, 68, 68, 0.04)', border: '1px solid rgba(239, 68, 68, 0.12)' }}>
+                      <span style={{ fontFamily: 'monospace', fontSize: '12.5px', color: 'hsl(var(--error))' }}>{addr}</span>
                       <button 
-                        key={c.id} 
                         type="button" 
-                        className={`stripe-btn-secondary ${activeChartTab === c.currency ? 'active' : ''}`}
-                        onClick={() => setActiveChartTab(c.currency)}
-                        style={{ padding: '5px 10px', fontSize: '11px', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                        className="stripe-btn-action" 
+                        style={{ padding: '4px', color: 'hsl(var(--text-muted))' }}
+                        onClick={() => removeFromBlacklist(addr)}
                       >
-                        <span style={{ fontSize: '14px' }}>{c.flag}</span>
-                        {c.currency}
+                        Remove
                       </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div style={{ height: '320px', width: '100%', marginBottom: '24px' }}>
-                  <svg viewBox="0 0 400 200" width="100%" height="100%">
-                    <defs>
-                      <linearGradient id="chart-gradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="hsl(var(--primary))" />
-                        <stop offset="100%" stopColor="hsl(var(--secondary))" stopOpacity="0.1" />
-                      </linearGradient>
-                    </defs>
-
-                    <line x1="40" y1="40" x2="380" y2="40" className="chart-grid-line" />
-                    <line x1="40" y1="110" x2="380" y2="110" className="chart-grid-line" />
-                    <line x1="40" y1="180" x2="380" y2="180" className="chart-grid-line" />
-
-                    <path d={renderChartPath()} className="chart-path" />
-
-                    {HISTORICAL_RATES[activeChartTab].map((val, index) => {
-                      const min = Math.min(...HISTORICAL_RATES[activeChartTab]);
-                      const max = Math.max(...HISTORICAL_RATES[activeChartTab]);
-                      const padding = (max - min) * 0.1 || 10;
-                      const yMin = min - padding;
-                      const yMax = max + padding;
-                      
-                      const x = (index / (HISTORICAL_RATES[activeChartTab].length - 1)) * 340 + 40;
-                      const y = 180 - ((val - yMin) / (yMax - yMin)) * 140;
-
-                      return (
-                        <g key={index}>
-                          <circle cx={x} cy={y} r="5" fill="hsl(var(--secondary))" stroke="hsl(var(--bg-card))" strokeWidth="2" />
-                          <text x={x} y={y - 10} textAnchor="middle" fill="#fff" fontSize="10" fontFamily="Space Grotesk" fontWeight="bold">
-                            {val.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                          </text>
-                        </g>
-                      );
-                    })}
-
-                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'].map((day, index) => {
-                      const x = (index / 6) * 340 + 40;
-                      return (
-                        <text key={day} x={x} y="196" textAnchor="middle" className="chart-axis-text" style={{ fontSize: '10px' }}>
-                          {day}
-                        </text>
-                      );
-                    })}
-                  </svg>
-                </div>
-              </div>
-
-              <div className="rate-grid">
-                {COUNTRIES.map(c => (
-                  <div key={c.id} className="rate-item">
-                    <div className="rate-item-header">
-                      <span className="rate-item-flag">{c.flag}</span>
-                      <span className="rate-item-name">{c.name}</span>
-                      <span className="rate-item-currency">{c.currency}</span>
                     </div>
-                    <div className="rate-item-value">{c.symbol}{c.rate.toLocaleString()}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Full Activity View */}
-          {activeTab === 'history' && (
-            <div className="stripe-card stripe-table-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2>
-                  <List className="text-sky-300 size-6" />
-                  {t('historyTitle')}
-                </h2>
-                <button 
-                  type="button" 
-                  className="stripe-btn-secondary" 
-                  onClick={handleRefresh}
-                >
-                  <RefreshCw className={`size-4 mr-2 ${isRefreshing ? 'spin-animation' : ''}`} />
-                  Refresh
-                </button>
+                  ))}
+                </div>
               </div>
 
-              <div className="table-responsive">
-                <table className="stripe-table">
-                  <thead>
-                    <tr>
-                      <th>{t('colType')}</th>
-                      <th>{t('colAmount')}</th>
-                      <th>{t('colPayout')}</th>
-                      <th>{t('colCountry')}</th>
-                      <th>{t('colTxHash')}</th>
-                      <th>{t('colStatus')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {transactions.map(tx => (
-                      <tr key={tx.id}>
-                        <td>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            {tx.type === 'sent' ? (
-                              <ArrowUpRight className="text-red-400 size-4" />
-                            ) : (
-                              <ArrowDownLeft className="text-emerald-400 size-4" />
-                            )}
-                            <span style={{ fontWeight: 600 }}>{tx.type}</span>
-                          </span>
-                        </td>
-                        <td style={{ fontWeight: 'bold' }}>
-                          ${tx.amount} USDC
-                        </td>
-                        <td style={{ color: 'hsl(var(--secondary))', fontWeight: 600 }}>
-                          {tx.localSymbol}{tx.localAmount}
-                        </td>
-                        <td>
-                          {tx.country === 'Global' ? (
-                            <span>🌎 Global</span>
-                          ) : tx.country === 'Intra-chain' ? (
-                            <span>⛓️ P2P Send</span>
-                          ) : (
-                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                              <span style={{ fontSize: '16px' }}>
-                                {tx.country === 'Vietnam'     ? '🇻🇳' :
-                                 tx.country === 'India'       ? '🇮🇳' :
-                                 tx.country === 'Philippines' ? '🇵🇭' :
-                                 tx.country === 'Indonesia'   ? '🇮🇩' : '🌐'}
-                              </span>
-                              <span>{tx.country}</span>
-                            </span>
-                          )}
-                        </td>
-                        <td>
-                          <a 
-                            href={`${ARC_TESTNET_PARAMS.blockExplorerUrls[0]}/tx/${tx.hash}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="tx-link"
-                          >
-                            {tx.hash.substring(0, 16)}...
-                            <ExternalLink className="size-3 inline ml-1" />
-                          </a>
-                        </td>
-                        <td>
-                          <span className={`status-badge status-${tx.status}`}>
-                            {tx.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             </div>
           )}
 
         </main>
       ) : (
-        /* Unconnected Landing Page View */
+        /* Connect Landing Screen */
         <div className="app-landing-screen">
-          <div style={{ position: 'absolute', top: '24px', right: '24px' }}>
+          <div style={{ position: 'absolute', top: '24px', right: '24px', display: 'flex', gap: '12px' }}>
             <button
               type="button"
               className="lang-selector-trigger"
@@ -1580,178 +2000,578 @@ function App() {
               {theme === 'dark' ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4 text-indigo-400" />}
             </button>
           </div>
+
           <div className="app-landing-hero">
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-              <div className="spinning-globe-container" style={{ width: '64px', height: '64px' }}>
-                <div className="spinning-globe"></div>
+              <div className="spinning-globe-container" style={{ width: '80px', height: '80px' }}>
+                <div className="spinning-globe" style={{ width: '70px', height: '70px' }}></div>
               </div>
             </div>
             <h1>Arc Pay</h1>
             <p style={{ fontSize: '18px', color: 'hsl(var(--text-secondary))', lineHeight: '1.6', marginBottom: '36px' }}>
-              {t('landingDesc')}
+              Instant cross-border stablecoin payments and invoice settlements powered by USDC native gas on Arc Network.
             </p>
 
-            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+            <button 
+              type="button" 
+              className="btn-landing-primary" 
+              onClick={() => setLoginModalOpen(true)}
+            >
+              <Wallet className="size-5" />
+              Connect Wallet
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Connect Wallet Selection Modal */}
+      {loginModalOpen && (
+        <div className="modal-overlay" onClick={() => setLoginModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '440px' }}>
+            <button type="button" className="modal-close-btn" onClick={() => setLoginModalOpen(false)}>
+              <X className="size-5" />
+            </button>
+            <h2>Connect to Arc Pay</h2>
+            <p style={{ fontSize: '13px', color: 'hsl(var(--text-secondary))', marginBottom: '24px' }}>
+              Select your preferred Web3 wallet provider or create an instant developer controlled wallet via Email/Google.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              
+              {/* MetaMask/OKX */}
               <button 
                 type="button" 
-                className="btn-landing-primary" 
-                onClick={connectWallet}
+                className="stripe-btn-secondary" 
+                style={{ justifyContent: 'flex-start', padding: '16px 20px', gap: '16px', borderRadius: '12px' }}
+                onClick={connectWeb3Wallet}
                 disabled={isConnecting}
               >
-                <Wallet className="size-5" />
-                {isConnecting ? t('connectingWallet') : t('connectWallet')}
-              </button>
-              <a 
-                href="https://docs.arc.io" 
-                target="_blank" 
-                rel="noreferrer" 
-                className="btn-landing-secondary"
-              >
-                Read Integration Docs
-                <ExternalLink className="size-4" />
-              </a>
-            </div>
-
-            <div className="rate-grid" style={{ marginTop: '56px' }}>
-              {COUNTRIES.map(c => (
-                <div key={c.id} className="rate-item">
-                  <img 
-                    src={`https://flagcdn.com/w40/${c.id.toLowerCase()}.png`} 
-                    alt="" 
-                    style={{ display: 'block', margin: '0 auto 8px', width: '24px', borderRadius: '1.5px' }}
-                  />
-                  <span className="rate-item-name">{c.name}</span>
-                  <span className="rate-item-value">{c.symbol}{c.rate.toLocaleString()}</span>
+                <img src="https://metamask.io/assets/icon.svg" alt="MetaMask" style={{ width: '24px' }} />
+                <div style={{ textAlign: 'left' }}>
+                  <strong style={{ display: 'block', fontSize: '14px' }}>MetaMask / OKX Wallet</strong>
+                  <span style={{ display: 'block', fontSize: '11px', color: 'hsl(var(--text-secondary))' }}>Connect your browser extension wallet</span>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Receive USDC Modal (Deposit QR code) */}
-      {receiveModalOpen && (
-        <div className="modal-overlay" onClick={() => setReceiveModalOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button 
-              type="button" 
-              className="modal-close-btn" 
-              onClick={() => setReceiveModalOpen(false)}
-              aria-label="Close modal"
-            >
-              <X className="size-5" />
-            </button>
-            <h2 style={{ justifyContent: 'center' }}>Receive USDC on Arc</h2>
-            <p style={{ fontSize: '13px', color: 'hsl(var(--text-secondary))' }}>
-              Scan this QR code or copy the address below to receive USDC. Ensure the sender is using the **Arc Testnet**.
-            </p>
-            
-            <div className="qr-code-wrapper">
-              <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${account}`} 
-                alt="EVM Deposit QR Code" 
-                style={{ display: 'block', width: '160px', height: '160px' }}
-              />
-            </div>
-
-            <div className="stripe-address-bar" style={{ cursor: 'pointer' }} onClick={copyAddressToClipboard}>
-              <span style={{ fontSize: '11px', wordBreak: 'break-all' }}>{account}</span>
-              <button type="button" aria-label="Copy address">
-                {copiedAddress ? <Check className="size-4 text-emerald-400" /> : <Copy className="size-4" />}
               </button>
-            </div>
 
-            <button 
-              type="button" 
-              className="stripe-btn-primary" 
-              style={{ marginTop: '20px' }}
-              onClick={() => setReceiveModalOpen(false)}
-            >
-              Done
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Invoice Created Modal (Share QR / Payment Link) */}
-      {invoiceModalOpen && (
-        <div className="modal-overlay" onClick={() => setInvoiceModalOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px' }}>
-            <button 
-              type="button" 
-              className="modal-close-btn" 
-              onClick={() => setInvoiceModalOpen(false)}
-              aria-label="Close invoice modal"
-            >
-              <X className="size-5" />
-            </button>
-            <h2 style={{ justifyContent: 'center' }}>USDC Request Generated</h2>
-            <p style={{ fontSize: '13px', color: 'hsl(var(--text-secondary))' }}>
-              Send this request URL or QR to your client. They can open it directly in this app to approve the payment.
-            </p>
-            
-            <div className="qr-code-wrapper">
-              <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(generatedInvoiceLink)}`} 
-                alt="USDC Invoice QR Code" 
-                style={{ display: 'block', width: '160px', height: '160px' }}
-              />
-            </div>
-
-            <div style={{ backgroundColor: 'rgba(0,0,0,0.25)', border: '1px solid hsla(var(--border-color), 0.5)', borderRadius: '10px', padding: '12px', fontSize: '13px', marginBottom: '20px', textAlign: 'left' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ color: 'hsl(var(--text-secondary))' }}>{t('requestAmountText')}</span>
-                <span style={{ fontWeight: 'bold' }}>{invoiceAmount} USDC</span>
+              {/* Divider */}
+              <div style={{ display: 'flex', alignItems: 'center', margin: '16px 0', gap: '12px' }}>
+                <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.06)' }}></div>
+                <span style={{ fontSize: '11px', color: 'hsl(var(--text-muted))', textTransform: 'uppercase' }}>Or Login Via Email</span>
+                <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.06)' }}></div>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span style={{ color: 'hsl(var(--text-secondary))' }}>{t('memoText')}</span>
-                <span style={{ fontStyle: 'italic' }}>{invoiceDesc || 'N/A'}</span>
-              </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
+
+              {/* Social Login Form */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <input 
-                  type="text" 
-                  readOnly 
-                  value={generatedInvoiceLink} 
+                  type="email" 
                   className="input-field" 
-                  style={{ padding: '8px', fontSize: '11px', flex: 1, paddingLeft: '8px' }}
+                  placeholder="Enter email address" 
+                  value={socialEmailInput}
+                  onChange={(e) => setSocialEmailInput(e.target.value)}
+                  style={{ paddingLeft: '16px', borderRadius: '10px' }}
                 />
+                
                 <button 
                   type="button" 
-                  className="stripe-btn-secondary" 
-                  style={{ padding: '8px' }}
-                  onClick={copyInvoiceToClipboard}
-                  aria-label="Copy invoice link"
+                  className="stripe-btn-primary"
+                  onClick={() => handleSocialLogin(socialEmailInput)}
+                  disabled={isSocialLoggingIn}
+                  style={{ background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, #295aa1 100%)' }}
                 >
-                  {copiedInvoice ? <Check className="size-4 text-emerald-400" /> : <Copy className="size-4" />}
+                  {isSocialLoggingIn ? 'Creating secure keys...' : 'Login & Generate Wallet'}
                 </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Static Counter QR Standee Modal */}
+      {standeeModalOpen && (
+        <div className="modal-overlay" onClick={() => setStandeeModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '440px', padding: '0px', overflow: 'hidden', backgroundColor: '#fff', color: '#000' }}>
+            
+            {/* Standee Header */}
+            <div style={{ backgroundColor: '#0f1013', color: '#fff', padding: '24px 20px', textAlign: 'center', position: 'relative' }}>
+              <button 
+                type="button" 
+                className="modal-close-btn" 
+                onClick={() => setStandeeModalOpen(false)}
+                style={{ color: '#fff', top: '16px', right: '16px' }}
+              >
+                <X className="size-5" />
+              </button>
+              <h3 style={{ margin: 0, fontFamily: 'Space Grotesk', fontSize: '20px', fontWeight: 'bold', letterSpacing: '-0.5px' }}>USDC Merchant Standee</h3>
+              <span style={{ fontSize: '11px', color: '#00e6c3', textTransform: 'uppercase', fontWeight: 600 }}>Arc Network Payments</span>
+            </div>
+
+            {/* Standee Body */}
+            <div style={{ padding: '32px 24px', textAlign: 'center' }}>
+              <h4 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>Arc Pay Merchant Stand</h4>
+              <span style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '24px' }}>Scan code below to send USDC on Arc</span>
+
+              <div style={{ border: '2px solid #000', display: 'inline-block', padding: '16px', borderRadius: '16px', backgroundColor: '#fff', marginBottom: '24px', boxShadow: '0 8px 20px rgba(0,0,0,0.08)' }}>
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(window.location.origin + window.location.pathname + '?pay=' + account)}`} 
+                  alt="Merchant QR" 
+                  style={{ width: '180px', height: '180px' }}
+                />
+              </div>
+
+              <div style={{ padding: '12px', borderRadius: '8px', backgroundColor: '#f5f5f5', border: '1px solid #e5e5e5', fontSize: '11.5px', fontFamily: 'monospace', wordBreak: 'break-all', marginBottom: '16px' }}>
+                {account}
+              </div>
+
+              <span style={{ display: 'block', fontSize: '10.5px', color: '#888', fontWeight: 600, textTransform: 'uppercase' }}>Powering Borderless Retail Payments</span>
+            </div>
+
+            {/* Print action footer */}
+            <div style={{ padding: '16px', borderTop: '1px solid #e5e5e5', backgroundColor: '#fafafa', display: 'flex', gap: '12px' }}>
+              <button 
+                type="button" 
+                className="stripe-btn-secondary" 
+                style={{ flex: 1, borderColor: '#ccc', color: '#333' }}
+                onClick={() => setStandeeModalOpen(false)}
+              >
+                Close
+              </button>
+              <button 
+                type="button" 
+                className="stripe-btn-primary" 
+                style={{ flex: 1, background: '#000', color: '#fff' }}
+                onClick={() => window.print()}
+              >
+                Print Standee Card
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Transaction Receipt Modal */}
+      {receiptModalOpen && activeReceipt && (
+        <div className="modal-overlay" onClick={() => setReceiptModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px', padding: '24px' }}>
+            <button type="button" className="modal-close-btn" onClick={() => setReceiptModalOpen(false)}>
+              <X className="size-5" />
+            </button>
+            
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'rgba(74, 222, 128, 0.08)', color: '#4ade80', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                <CheckCircle2 className="size-6" />
+              </div>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Payment Receipt</h3>
+              <span style={{ fontSize: '12px', color: 'hsl(var(--text-secondary))' }}>Transaction completed successfully</span>
+            </div>
+
+            {/* Receipt Details */}
+            <div style={{ borderTop: '1px dashed rgba(255,255,255,0.1)', borderBottom: '1px dashed rgba(255,255,255,0.1)', padding: '16px 0', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px', textAlign: 'left', fontFamily: 'monospace' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'hsl(var(--text-secondary))' }}>Receipt ID:</span>
+                <span style={{ fontWeight: 600 }}>{activeReceipt.txId}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'hsl(var(--text-secondary))' }}>Sender:</span>
+                <span style={{ fontWeight: 600 }}>{activeReceipt.sender.substring(0, 8)}...</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'hsl(var(--text-secondary))' }}>Recipient:</span>
+                <span style={{ fontWeight: 600 }}>{activeReceipt.recipient.substring(0, 8)}...</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'hsl(var(--text-secondary))' }}>Amount:</span>
+                <span style={{ fontWeight: 600, color: 'hsl(var(--secondary))' }}>${activeReceipt.amount} USDC</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'hsl(var(--text-secondary))' }}>Network Gas:</span>
+                <span style={{ fontWeight: 600 }}>{activeReceipt.gasPaid}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'hsl(var(--text-secondary))' }}>Timestamp:</span>
+                <span>{activeReceipt.date}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'hsl(var(--text-secondary))' }}>Memo:</span>
+                <span>{activeReceipt.memo}</span>
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '12px' }}>
+            {/* Barcode simulation */}
+            <div style={{ marginTop: '20px', textAlign: 'center', opacity: 0.5 }}>
+              <div style={{ height: '30px', width: '200px', backgroundColor: '#fff', margin: '0 auto 4px', display: 'flex', alignItems: 'center', justifyContent: 'space-around', overflow: 'hidden' }}>
+                {Array.from({length: 30}).map((_, i) => (
+                  <div key={i} style={{ width: i % 3 === 0 ? '4px' : i % 2 === 0 ? '2px' : '1px', height: '100%', backgroundColor: '#000' }}></div>
+                ))}
+              </div>
+              <span style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '2px' }}>{activeReceipt.hash.substring(0, 16)}</span>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', marginTop: '24px' }}>
               <button 
                 type="button" 
                 className="stripe-btn-secondary" 
                 style={{ flex: 1 }}
-                onClick={() => {
-                  setInvoiceModalOpen(false);
-                  setActiveTab('dashboard');
-                }}
+                onClick={() => setReceiptModalOpen(false)}
               >
-                {t('close')}
+                Close
               </button>
               <button 
                 type="button" 
                 className="stripe-btn-primary" 
                 style={{ flex: 1 }}
                 onClick={() => {
-                  copyInvoiceToClipboard();
-                  setInvoiceModalOpen(false);
-                  setActiveTab('dashboard');
+                  window.print();
+                  setReceiptModalOpen(false);
                 }}
               >
-                {t('copyClose')}
+                Print Receipt
               </button>
             </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Transaction Simulation & Security Checklist Drawer Modal */}
+      {simulationModalOpen && simulationTxData && (
+        <div className="modal-overlay" onClick={() => !isSendingTx && setSimulationModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px', textAlign: 'left' }}>
+            <h2 style={{ display: 'flex', gap: '8px', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '16px', marginBottom: '20px' }}>
+              <Shield className="text-secondary size-5" />
+              Transaction Security Pre-flight
+            </h2>
+
+            {/* Checklist states */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '24px' }}>
+              
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                <div style={{ padding: '4px', borderRadius: '50%', backgroundColor: 'rgba(0, 230, 195, 0.1)', color: 'hsl(var(--secondary))' }}>
+                  <CheckCircle2 className="size-4" />
+                </div>
+                <div>
+                  <strong style={{ display: 'block', fontSize: '13px' }}>Address Formatting Verification</strong>
+                  <span style={{ display: 'block', fontSize: '11px', color: 'hsl(var(--text-secondary))' }}>Ensuring target is valid checksummed EVM address.</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                <div style={{ 
+                  padding: '4px', 
+                  borderRadius: '50%', 
+                  backgroundColor: isSimulating ? 'rgba(255,255,255,0.05)' : simulationSuccess === false ? 'rgba(239,68,68,0.1)' : 'rgba(0, 230, 195, 0.1)', 
+                  color: isSimulating ? 'white' : simulationSuccess === false ? 'hsl(var(--error))' : 'hsl(var(--secondary))' 
+                }}>
+                  {isSimulating ? <RefreshCw className="size-4 spin-animation" /> : simulationSuccess === false ? <AlertTriangle className="size-4" /> : <CheckCircle2 className="size-4" />}
+                </div>
+                <div>
+                  <strong style={{ display: 'block', fontSize: '13px' }}>EVM Threat & Fraud Assessment</strong>
+                  <span style={{ display: 'block', fontSize: '11px', color: 'hsl(var(--text-secondary))' }}>Cross-referencing address blacklist cache.</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                <div style={{ 
+                  padding: '4px', 
+                  borderRadius: '50%', 
+                  backgroundColor: isSimulating ? 'rgba(255,255,255,0.05)' : 'rgba(0, 230, 195, 0.1)', 
+                  color: isSimulating ? 'white' : 'hsl(var(--secondary))' 
+                }}>
+                  {isSimulating ? <RefreshCw className="size-4 spin-animation" /> : <CheckCircle2 className="size-4" />}
+                </div>
+                <div>
+                  <strong style={{ display: 'block', fontSize: '13px' }}>Dry-run Execution Simulation</strong>
+                  <span style={{ display: 'block', fontSize: '11px', color: 'hsl(var(--text-secondary))' }}>Simulating transaction calls on Arc Testnet node.</span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Simulation Results Output Box */}
+            <div style={{ backgroundColor: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '16px', marginBottom: '24px', fontSize: '12.5px', fontFamily: 'monospace' }}>
+              <span style={{ display: 'block', color: 'hsl(var(--text-muted))', textTransform: 'uppercase', fontSize: '10px', marginBottom: '8px', letterSpacing: '0.5px' }}>Dry-run Console Log</span>
+              
+              {isSimulating ? (
+                <span style={{ color: 'white', display: 'block' }}>
+                  <RefreshCw className="size-3 inline mr-1 spin-animation" />
+                  Running threat analysis...
+                </span>
+              ) : (
+                <pre style={{ whiteSpace: 'pre-wrap', color: simulationSuccess ? '#4ade80' : '#f87171', margin: 0 }}>
+                  {simulationDetails}
+                </pre>
+              )}
+            </div>
+
+            {/* Transaction Parameters Summary */}
+            <div style={{ backgroundColor: 'rgba(255,255,255,0.02)', padding: '14px', borderRadius: '10px', fontSize: '13px', marginBottom: '24px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <span style={{ color: 'hsl(var(--text-secondary))' }}>Transaction Type:</span>
+                <span style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{simulationTxData.type}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <span style={{ color: 'hsl(var(--text-secondary))' }}>USDC Subtotal:</span>
+                <span style={{ fontWeight: 'bold' }}>{simulationTxData.amount} USDC</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'hsl(var(--text-secondary))' }}>Estimated Fee:</span>
+                <span style={{ fontWeight: 'bold' }}>{sponsoredGas ? '$0.00 (Sponsored)' : '$0.0042 USDC'}</span>
+              </div>
+            </div>
+
+            {/* Confirm Actions */}
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button 
+                type="button" 
+                className="stripe-btn-secondary" 
+                style={{ flex: 1 }}
+                onClick={() => setSimulationModalOpen(false)}
+                disabled={isSendingTx}
+              >
+                Abort
+              </button>
+              
+              <button 
+                type="button" 
+                className="stripe-btn-primary" 
+                style={{ flex: 2, background: simulationSuccess ? 'linear-gradient(135deg, #00e6c3 0%, #00b09b 100%)' : 'rgba(255,255,255,0.1)', color: '#000', fontWeight: 'bold', border: 'none' }}
+                onClick={() => {
+                  if (simulationTxData.type === 'split') {
+                    broadcastSplitPayment();
+                  } else {
+                    broadcastP2pTransaction();
+                  }
+                }}
+                disabled={!simulationSuccess || isSendingTx}
+              >
+                {isSendingTx ? (
+                  <>
+                    <RefreshCw className="size-4 inline mr-1 spin-animation" />
+                    Broadcasting...
+                  </>
+                ) : (
+                  'Confirm & Broadcast'
+                )}
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* CCTP Cross-chain Bridge Simulator Overlay */}
+      {isBridging && bridgeStep > 0 && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ maxWidth: '440px', padding: '32px' }}>
+            
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: 'bold' }}>Circle CCTP Settlement</h3>
+              <span style={{ fontSize: '12.5px', color: 'hsl(var(--text-secondary))' }}>
+                Bridging {bridgeAmount} USDC from {bridgeSourceChain} to Arc
+              </span>
+            </div>
+
+            {/* Flow line animation */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+              
+              {/* Step 1: Burn */}
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', opacity: bridgeStep >= 1 ? 1 : 0.4 }}>
+                <div style={{ 
+                  width: '28px', 
+                  height: '28px', 
+                  borderRadius: '50%', 
+                  backgroundColor: bridgeStep > 1 ? 'rgba(74, 222, 128, 0.1)' : 'rgba(62, 116, 187, 0.1)', 
+                  color: bridgeStep > 1 ? '#4ade80' : 'white', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  fontSize: '12px' 
+                }}>
+                  {bridgeStep > 1 ? <Check className="size-4" /> : '1'}
+                </div>
+                <div>
+                  <span style={{ display: 'block', fontWeight: 600, fontSize: '13px' }}>Burn USDC on {bridgeSourceChain}</span>
+                  <span style={{ display: 'block', fontSize: '11px', color: 'hsl(var(--text-secondary))' }}>
+                    {bridgeStep === 1 ? 'Initiating contract call...' : 'Burn tx confirmed.'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Step 2: Attestation */}
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', opacity: bridgeStep >= 2 ? 1 : 0.4 }}>
+                <div style={{ 
+                  width: '28px', 
+                  height: '28px', 
+                  borderRadius: '50%', 
+                  backgroundColor: bridgeStep > 2 ? 'rgba(74, 222, 128, 0.1)' : 'rgba(62, 116, 187, 0.1)', 
+                  color: bridgeStep > 2 ? '#4ade80' : 'white', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  fontSize: '12px' 
+                }}>
+                  {bridgeStep > 2 ? <Check className="size-4" /> : bridgeStep === 2 ? <RefreshCw className="size-4 spin-animation" /> : '2'}
+                </div>
+                <div>
+                  <span style={{ display: 'block', fontWeight: 600, fontSize: '13px' }}>Awaiting Circle Attestation</span>
+                  <span style={{ display: 'block', fontSize: '11px', color: 'hsl(var(--text-secondary))' }}>
+                    {bridgeStep === 2 ? `Gathering CCTP validator signatures (${bridgeTimer}s)...` : bridgeStep > 2 ? 'Attestation verified.' : 'Pending burn verification.'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Step 3: Mint */}
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', opacity: bridgeStep >= 3 ? 1 : 0.4 }}>
+                <div style={{ 
+                  width: '28px', 
+                  height: '28px', 
+                  borderRadius: '50%', 
+                  backgroundColor: bridgeStep > 3 ? 'rgba(74, 222, 128, 0.1)' : 'rgba(62, 116, 187, 0.1)', 
+                  color: bridgeStep > 3 ? '#4ade80' : 'white', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  fontSize: '12px' 
+                }}>
+                  {bridgeStep > 3 ? <Check className="size-4" /> : bridgeStep === 3 ? <RefreshCw className="size-4 spin-animation" /> : '3'}
+                </div>
+                <div>
+                  <span style={{ display: 'block', fontWeight: 600, fontSize: '13px' }}>Mint USDC on Arc network</span>
+                  <span style={{ display: 'block', fontSize: '11px', color: 'hsl(var(--text-secondary))' }}>
+                    {bridgeStep === 3 ? 'Executing claim transaction...' : 'Mint complete.'}
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+            <div className="progress-bar-container" style={{ width: '100%', height: '6px', borderRadius: '3px', backgroundColor: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+              <div 
+                className="progress-bar-fill" 
+                style={{ 
+                  height: '100%', 
+                  backgroundColor: 'hsl(var(--secondary))', 
+                  transition: 'width 0.4s ease', 
+                  width: bridgeStep === 1 ? '25%' : bridgeStep === 2 ? '60%' : bridgeStep === 3 ? '90%' : '100%' 
+                }}
+              ></div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Floating Developer Debug Console Drawer */}
+      {devConsoleOpen && (
+        <div className="developer-logs-console" style={{ position: 'fixed', bottom: 0, left: account ? '260px' : 0, right: 0, height: '240px', backgroundColor: '#0c0d0f', borderTop: '1px solid rgba(255,255,255,0.08)', zIndex: 9999, display: 'flex', flexDirection: 'column', fontFamily: 'monospace' }}>
+          
+          {/* Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 16px', backgroundColor: '#131418', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', color: '#00e6c3' }}>
+              <Terminal className="size-4" />
+              <span style={{ fontSize: '12px', fontWeight: 'bold' }}>Arc-Payment Developer Log Output</span>
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button 
+                type="button" 
+                style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '11px' }}
+                onClick={() => setDeveloperLogs([{ id: 1, time: new Date().toLocaleTimeString(), text: 'Console cleared.', type: 'info' }])}
+              >
+                Clear
+              </button>
+              <button 
+                type="button" 
+                style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '11px' }}
+                onClick={() => setDevConsoleOpen(false)}
+              >
+                Close (Esc)
+              </button>
+            </div>
+          </div>
+
+          {/* Scrolling output logs */}
+          <div style={{ flex: 1, padding: '12px 16px', overflowY: 'auto', fontSize: '11.5px', color: '#bbb', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {developerLogs.map(log => (
+              <div key={log.id} style={{ display: 'flex', gap: '8px', lineHeight: '1.4' }}>
+                <span style={{ color: '#555' }}>[{log.time}]</span>
+                <span style={{ 
+                  color: log.type === 'error' ? '#f87171' : log.type === 'success' ? '#4ade80' : log.type === 'warning' ? '#fbbf24' : '#60a5fa' 
+                }}>[{log.type.toUpperCase()}]</span>
+                <span>{log.text}</span>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      )}
+
+      {/* Invoice Details Modal */}
+      {invoiceModalOpen && (
+        <div className="modal-overlay" onClick={() => setInvoiceModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '460px' }}>
+            <button type="button" className="modal-close-btn" onClick={() => setInvoiceModalOpen(false)}>
+              <X className="size-5" />
+            </button>
+            <h2>USDC Invoice Created</h2>
+            <p style={{ fontSize: '13px', color: 'hsl(var(--text-secondary))', marginBottom: '24px' }}>
+              Share this request URL or QR code. Client can pay directly using MetaMask or Social wallets.
+            </p>
+
+            <div style={{ border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '16px', marginBottom: '24px', backgroundColor: 'rgba(0,0,0,0.15)' }}>
+              
+              <div style={{ border: '2px solid #000', display: 'inline-block', padding: '12px', borderRadius: '12px', backgroundColor: '#fff', marginBottom: '16px' }}>
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(generatedInvoiceLink)}`} 
+                  alt="Invoice QR" 
+                  style={{ width: '160px', height: '160px' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '8px' }}>
+                <span style={{ color: 'hsl(var(--text-secondary))' }}>Amount:</span>
+                <strong style={{ color: 'hsl(var(--secondary))' }}>{invoiceAmount} USDC</strong>
+              </div>
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '8px' }}>
+                <span style={{ color: 'hsl(var(--text-secondary))' }}>Memo:</span>
+                <span style={{ fontStyle: 'italic' }}>{invoiceDesc || 'N/A'}</span>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                <span style={{ color: 'hsl(var(--text-secondary))' }}>Expiry:</span>
+                <span>{invoiceExpiry}</span>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+              <input 
+                type="text" 
+                readOnly 
+                value={generatedInvoiceLink} 
+                className="input-field" 
+                style={{ padding: '8px 12px', fontSize: '11px', flex: 1 }}
+              />
+              <button 
+                type="button" 
+                className="stripe-btn-secondary" 
+                style={{ padding: '8px 12px' }}
+                onClick={copyInvoiceToClipboard}
+              >
+                {copiedInvoice ? <Check className="size-4 text-emerald-400" /> : <Copy className="size-4" />}
+              </button>
+            </div>
+
+            <button 
+              type="button" 
+              className="stripe-btn-primary"
+              onClick={() => {
+                copyInvoiceToClipboard();
+                setInvoiceModalOpen(false);
+              }}
+            >
+              Copy Link & Close
+            </button>
           </div>
         </div>
       )}

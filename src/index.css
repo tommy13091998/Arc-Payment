@@ -1350,3 +1350,87 @@ body.light-theme .rate-item:hover {
 body.light-theme .built-on-arc {
   background: linear-gradient(135deg, #475569 30%, #0f172a 100%);
 }
+
+/* Custom UI Toggle Switch styles */
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: .4s;
+  border-radius: 20px;
+  border: 1px solid hsla(var(--border-color), 0.8);
+}
+
+.switch-slider::before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+body.light-theme .switch-slider {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.switch-slider.active {
+  background-color: hsl(var(--secondary));
+  border-color: hsla(var(--secondary), 0.3);
+}
+
+.switch-slider.active::before {
+  transform: translateX(20px);
+}
+
+/* Developer Logs Terminal */
+.developer-logs-console {
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+}
+
+body.light-theme .developer-logs-console {
+  background-color: #f8f9fa !important;
+  border-top-color: #ddd !important;
+}
+
+body.light-theme .developer-logs-console div {
+  color: #333 !important;
+  background-color: #e9ecef !important;
+}
+
+/* Merchant Stats Dashboard Grid */
+.merchant-stats-grid {
+  margin-bottom: 24px;
+}
+
+body.light-theme .merchant-stats-grid .stripe-card {
+  background-color: #ffffff;
+  border-color: #ddd;
+}
+
+/* Network badges */
+.network-badge-label.active {
+  background-color: rgba(0, 230, 195, 0.08);
+  border-color: rgba(0, 230, 195, 0.25);
+  color: hsl(var(--secondary));
+}
+
+body.light-theme .network-badge-label {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #444;
+}
+
+body.light-theme .network-badge-label.active {
+  background-color: rgba(0, 230, 195, 0.08);
+  border-color: rgba(0, 230, 195, 0.2);
+  color: #0d9488;
+}
+
