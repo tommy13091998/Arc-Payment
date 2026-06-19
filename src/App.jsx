@@ -609,6 +609,7 @@ function App() {
       <div className="glow-background">
         <div className="glow-orb-1"></div>
         <div className="glow-orb-2"></div>
+        <div className="glow-orb-3"></div>
       </div>
 
       {/* Fixed Sidebar navigation */}
